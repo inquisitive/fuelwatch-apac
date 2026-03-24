@@ -1,0 +1,63 @@
+{
+  "updated": "2026-03-24T00:00:00Z",
+  "updated_sgt": "24 Mar 2026, 08:00 AM SGT",
+  "countries": {
+    "sg": {
+      "Esso":    { "ron92": 3.43, "ron95": 3.47, "ron98": 3.97, "diesel": 3.73 },
+      "Shell":   { "ron92": null, "ron95": 3.47, "ron98": 3.99, "diesel": 3.73 },
+      "SPC":     { "ron92": 3.43, "ron95": 3.46, "ron98": 3.97, "diesel": 3.56 },
+      "Caltex":  { "ron92": 3.43, "ron95": 3.47, "ron98": null, "diesel": 3.73 },
+      "Sinopec": { "ron92": null, "ron95": 3.47, "ron98": 3.97, "diesel": 3.72 }
+    },
+    "my": {
+      "Petronas": { "ron92": 2.05, "ron95": 2.05, "ron98": 3.47, "diesel": 3.35 },
+      "Shell":    { "ron92": 2.05, "ron95": 2.05, "ron98": 3.60, "diesel": 3.35 },
+      "Caltex":   { "ron92": 2.05, "ron95": 2.05, "ron98": 3.55, "diesel": 3.35 },
+      "BHPetrol": { "ron92": 2.05, "ron95": 2.05, "ron98": 3.50, "diesel": 3.35 }
+    },
+    "th": {
+      "PTT":      { "ron92": 35.96, "ron95": 40.50, "ron98": null, "diesel": 28.79 },
+      "Shell":    { "ron92": 36.08, "ron95": 40.75, "ron98": null, "diesel": 28.89 },
+      "Bangchak": { "ron92": 35.88, "ron95": 40.40, "ron98": null, "diesel": 28.70 }
+    },
+    "ph": {
+      "Shell":  { "ron92": 56.20, "ron95": 60.80, "ron98": 65.40, "diesel": 55.30 },
+      "Caltex": { "ron92": 55.90, "ron95": 60.50, "ron98": 65.10, "diesel": 55.00 },
+      "Petron": { "ron92": 55.60, "ron95": 60.20, "ron98": 64.80, "diesel": 54.70 }
+    },
+    "id": {
+      "Pertamina": { "ron92": 10000, "ron95": 13500, "ron98": 15900, "diesel": 6800 },
+      "Shell":     { "ron92": null,  "ron95": 13990, "ron98": 16290, "diesel": 14640 },
+      "Vivo":      { "ron92": 10000, "ron95": 13500, "ron98": null,  "diesel": 13590 }
+    },
+    "au": {
+      "Shell":  { "ron92": null, "ron95": 2.10, "ron98": 2.35, "diesel": 2.18 },
+      "BP":     { "ron92": null, "ron95": 2.12, "ron98": 2.38, "diesel": 2.20 },
+      "Ampol":  { "ron92": null, "ron95": 2.05, "ron98": 2.29, "diesel": 2.12 },
+      "Caltex": { "ron92": null, "ron95": 2.08, "ron98": 2.32, "diesel": 2.15 }
+    },
+    "jp": {
+      "ENEOS":     { "ron92": null, "ron95": 175, "ron98": 186, "diesel": 154 },
+      "Idemitsu":  { "ron92": null, "ron95": 174, "ron98": 185, "diesel": 153 },
+      "Cosmo Oil": { "ron92": null, "ron95": 173, "ron98": 184, "diesel": 152 }
+    },
+    "kr": {
+      "SK Energy":       { "ron92": 1610, "ron95": 1670, "ron98": null, "diesel": 1520 },
+      "GS Caltex":       { "ron92": 1605, "ron95": 1665, "ron98": null, "diesel": 1515 },
+      "Hyundai Oilbank": { "ron92": 1595, "ron95": 1655, "ron98": null, "diesel": 1505 }
+    },
+    "cn": {
+      "Sinopec":    { "ron92": 7.28, "ron95": 7.68, "ron98": 8.22, "diesel": 7.38 },
+      "PetroChina": { "ron92": 7.28, "ron95": 7.68, "ron98": 8.22, "diesel": 7.38 }
+    },
+    "in": {
+      "Indian Oil": { "ron92": null, "ron95": 102.92, "ron98": 111.30, "diesel": 89.62 },
+      "BPCL":       { "ron92": null, "ron95": 102.78, "ron98": 111.10, "diesel": 89.45 },
+      "HPCL":       { "ron92": null, "ron95": 102.85, "ron98": 111.20, "diesel": 89.55 }
+    },
+    "vn": {
+      "Petrolimex": { "ron92": 19300, "ron95": 20500, "ron98": null, "diesel": 17600 },
+      "PV Oil":     { "ron92": 19250, "ron95": 20450, "ron98": null, "diesel": 17550 }
+    }
+  }
+}
