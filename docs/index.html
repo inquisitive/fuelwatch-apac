@@ -141,6 +141,24 @@ tr:hover td{background:var(--red-bg);}
 .spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:.75rem;color:var(--muted);}
+
+/* CURRENCY SWITCHER */
+.currency-toggle{display:flex;align-items:center;gap:0;border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;flex-shrink:0;}
+.currency-btn{padding:5px 12px;font-size:.72rem;font-weight:700;cursor:pointer;border:none;background:#fff;color:var(--muted);font-family:var(--mono);transition:all .15s;letter-spacing:.04em;}
+.currency-btn:hover{background:var(--bg);}
+.currency-btn.active{background:var(--red);color:#fff;}
+.currency-divider{width:1px;height:100%;background:var(--border2);}
+
+/* FOOTER */
+.site-footer{background:#fff;border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 1.25rem;}
+.site-footer-inner{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:.75rem;}
+.footer-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+.footer-disclaimer{font-size:.68rem;color:var(--muted);line-height:1.6;max-width:680px;}
+.footer-disclaimer strong{color:#555;}
+.footer-brand{font-size:.72rem;color:var(--muted);}
+.footer-brand a{color:var(--red);text-decoration:none;font-weight:600;}
+.footer-brand a:hover{text-decoration:underline;}
+.footer-divider{height:1px;background:var(--border);width:100%;}
 </style>
 </head>
 <body>
@@ -155,7 +173,14 @@ tr:hover td{background:var(--red-bg);}
         <div class="brand-sub">Petrol Prices · Asia-Pacific</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+      <div class="currency-toggle">
+        <button class="currency-btn active" id="btn-local" onclick="setCurrency('local')">Local</button>
+        <div class="currency-divider"></div>
+        <button class="currency-btn" id="btn-usd" onclick="setCurrency('usd')">USD</button>
+        <div class="currency-divider"></div>
+        <button class="currency-btn" id="btn-sgd" onclick="setCurrency('sgd')">SGD</button>
+      </div>
       <div class="timestamp" id="clock"></div>
       <div class="live-badge loading-badge" id="status-badge">⟳ Loading...</div>
     </div>
@@ -400,8 +425,10 @@ function renderOverview() {
         <span class="card-count">${c.brands.length} brands</span>
       </div>`;
     GRADES.forEach(g => {
-      const p = getBest(c, g);
-      if(p !== null) html += `<div class="fuel-row"><span class="ftag ${g}">${GLABELS[g]}</span><span class="fprice">${fmt(p)} <span class="fprice-unit">${cur(c)}</span></span></div>`;
+      const raw = getBest(c, g);
+      const p = convertPrice(raw, c.id);
+      const unit = currentCurrency === 'local' ? cur(c) : getDisplayCurrencySymbol();
+      if(p !== null) html += `<div class="fuel-row"><span class="ftag ${g}">${GLABELS[g]}</span><span class="fprice">${fmt(p)} <span class="fprice-unit">${unit}</span></span></div>`;
     });
     html += `</div>`;
   });
@@ -435,7 +462,7 @@ function renderBrandsContent() {
       <div class="btable-head">
         <span class="btable-flag">${c.flag}</span>
         <span class="btable-cname">${c.name}</span>
-        <span class="btable-unit">${c.unit}</span>
+        <span class="btable-unit">${getDisplayUnit(c)}</span>
       </div>
       <table><thead><tr>
         <th>Brand</th>
@@ -446,7 +473,7 @@ function renderBrandsContent() {
       </tr></thead><tbody>`;
     c.brands.forEach(b => {
       const cell = (val, isBest) => val!=null
-        ? `<td class="td-price ${isBest?'best':''}">${fmt(val)}${isBest?'<span class="best-tag">BEST</span>':''}</td>`
+        ? `<td class="td-price ${isBest?'best':''}">${fmt(convertPrice(val, c.id))}${isBest?'<span class="best-tag">BEST</span>':''}</td>`
         : `<td class="td-na">—</td>`;
       html += `<tr>
         <td><div class="td-brand"><span>${b.logo}</span>${b.name}</div></td>
@@ -473,7 +500,7 @@ function renderGrades() {
       const p = getBest(c,g);
       rows += `<div class="grade-row">
         <div class="gr-country"><span>${c.flag}</span>${c.name}</div>
-        <div><span class="gr-price">${fmt(p)}</span><span class="gr-unit">${cur(c)}/L</span></div>
+        <div><span class="gr-price">${fmt(convertPrice(p, c.id))}</span><span class="gr-unit">${currentCurrency === 'local' ? cur(c) : getDisplayCurrencySymbol()}/L</span></div>
       </div>`;
     });
     html += `<div class="grade-card">
@@ -512,7 +539,7 @@ function renderMap() {
       pin.querySelector(".pin-ring").setAttribute("opacity","1");
       pin.querySelector(".pin-label").style.display="none";
       let ttHTML = `<div class="tt-name">${c.flag} ${c.name}</div>`;
-      GRADES.forEach(g=>{const p=getBest(c,g);if(p!==null)ttHTML+=`<div class="tt-row"><span class="tt-g">${GLABELS[g]}</span><span class="tt-v">${fmt(p)} ${cur(c)}</span></div>`;});
+      GRADES.forEach(g=>{const p=getBest(c,g);if(p!==null)ttHTML+=`<div class="tt-row"><span class="tt-g">${GLABELS[g]}</span><span class="tt-v">${fmt(convertPrice(p,c.id))} ${currentCurrency==='local'?cur(c):getDisplayCurrencySymbol()}</span></div>`;});
       tooltip.innerHTML = ttHTML;
       const rect = svg.getBoundingClientRect();
       const pctX = ((c.cx / 600) * rect.width + rect.left - rect.left);
@@ -590,6 +617,60 @@ function renderTrendsContent() {
   document.getElementById("trends-content").innerHTML = html;
 }
 
+
+// ─── CURRENCY CONVERSION ──────────────────────────────────────────────────
+// Approximate exchange rates to USD (update periodically)
+const FX_TO_USD = {
+  sg: 1/1.35,   // SGD → USD
+  my: 1/4.48,   // MYR → USD
+  th: 1/34.5,   // THB → USD
+  ph: 1/56.5,   // PHP → USD
+  id: 1/16300,  // IDR → USD
+  au: 1/1.55,   // AUD → USD
+  jp: 1/149,    // JPY → USD
+  kr: 1/1340,   // KRW → USD
+  cn: 1/7.24,   // CNY → USD
+  in: 1/83.5,   // INR → USD
+  vn: 1/25400,  // VND → USD
+};
+const USD_TO_SGD = 1.35;
+let currentCurrency = 'local'; // 'local' | 'usd' | 'sgd'
+
+function convertPrice(price, countryId) {
+  if (price === null || price === undefined) return null;
+  if (currentCurrency === 'local') return price;
+  const rate = FX_TO_USD[countryId] || 1;
+  const usd = price * rate;
+  if (currentCurrency === 'usd') return Math.round(usd * 1000) / 1000;
+  if (currentCurrency === 'sgd') return Math.round(usd * USD_TO_SGD * 1000) / 1000;
+  return price;
+}
+
+function getDisplayUnit(country) {
+  if (currentCurrency === 'usd') return 'USD/L';
+  if (currentCurrency === 'sgd') return 'SGD/L';
+  return country.unit;
+}
+
+function getDisplayCurrencySymbol() {
+  if (currentCurrency === 'usd') return 'USD';
+  if (currentCurrency === 'sgd') return 'SGD';
+  return '';
+}
+
+function setCurrency(mode) {
+  currentCurrency = mode;
+  document.getElementById('btn-local').classList.toggle('active', mode === 'local');
+  document.getElementById('btn-usd').classList.toggle('active', mode === 'usd');
+  document.getElementById('btn-sgd').classList.toggle('active', mode === 'sgd');
+  // Re-render all views
+  renderOverview();
+  renderBrandsContent();
+  renderGrades();
+  renderTrendsContent();
+  renderMap();
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────
 function init() {
   renderOverview();
@@ -645,5 +726,24 @@ async function loadPrices() {
 }
 loadPrices();
 </script>
+
+<!-- FOOTER -->
+<div class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-row">
+      <div class="footer-disclaimer">
+        <strong>⚠ Disclaimer:</strong> Prices on FuelWatch APAC are updated on a <strong>weekly basis</strong>, or whenever possible. Data is sourced from publicly available references and may not reflect real-time pump prices. Always verify with your local petrol station before fuelling. FuelWatch APAC is a passion project and is not affiliated with any oil company or government body.
+      </div>
+      <div class="footer-brand">
+        Built with ❤️ by <a href="https://theadvocators.co/" target="_blank" rel="noopener">The Advocators &amp; Co</a>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-row">
+      <div class="footer-brand" style="font-size:.62rem;color:var(--muted2);">© 2026 FuelWatch APAC · Free to use · No ads · No sign-up</div>
+      <div class="footer-brand" style="font-size:.62rem;"><a href="https://theadvocators.co/" target="_blank" rel="noopener">theadvocators.co</a></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
