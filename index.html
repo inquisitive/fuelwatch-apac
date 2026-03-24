@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FuelWatch APAC — Petrol Station Prices</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F6F2;--surface:#fff;--border:#E5E1D9;--border2:#CCC8BF;
+  --text:#1A1A1A;--muted:#7A7570;--muted2:#B0ABA4;
+  --red:#E84B1A;--red-bg:#FFF2EE;--green:#059669;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  --shadow-lg:0 2px 8px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.06);
+  --font:'Outfit',sans-serif;--mono:'DM Mono',monospace;--r:10px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.topbar-inner{max-width:1200px;margin:0 auto;padding:0 1.25rem;display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-icon{width:34px;height:34px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 8px rgba(232,75,26,.4);flex-shrink:0;}
+.brand-name{font-weight:800;font-size:1rem;letter-spacing:-.02em;}
+.brand-sub{font-size:.58rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono);}
+.live-badge{display:flex;align-items:center;gap:5px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:999px;padding:3px 10px;font-size:.62rem;font-weight:600;color:#059669;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);}
+.live-dot{width:5px;height:5px;background:#10B981;border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.loading-badge{background:#FFF7ED;border-color:#FED7AA;color:#C2410C;}
+.timestamp{text-align:right;font-size:.62rem;color:var(--muted);font-family:var(--mono);line-height:1.5;}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--border);}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.25rem;display:flex;overflow-x:auto;gap:0;}
+.nav-tab{padding:.65rem 1.1rem;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font);}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--red);border-bottom-color:var(--red);}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;}
+.view{display:none;}.view.active{display:block;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+.filter-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px;}
+.chip{padding:4px 12px;border-radius:999px;font-size:.7rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap;font-family:var(--font);}
+.chip:hover{border-color:var(--red);color:var(--red);}
+.chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+
+/* INFO NOTE */
+.info-note{background:var(--red-bg);border:1px solid #FECBB4;border-radius:var(--r);padding:.75rem 1rem;font-size:.72rem;color:#9A3412;margin-bottom:1.25rem;}
+
+/* OVERVIEW GRID */
+.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem;}
+.country-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow);cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+.country-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .2s;}
+.country-card:hover{border-color:var(--red);box-shadow:var(--shadow-lg);transform:translateY(-1px);}
+.country-card:hover::after{transform:scaleX(1);}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;}
+.card-flag{font-size:1.4rem;}
+.card-name{font-weight:700;font-size:.88rem;}
+.card-unit{font-size:.6rem;color:var(--muted);font-family:var(--mono);margin-top:1px;}
+.card-count{font-size:.62rem;color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:999px;white-space:nowrap;}
+.fuel-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.ftag{font-size:.62rem;font-weight:600;font-family:var(--mono);padding:2px 8px;border-radius:4px;}
+.ftag.ron92{background:#FEF3C7;color:#92400E;}
+.ftag.ron95{background:#D1FAE5;color:#064E3B;}
+.ftag.ron98{background:#DBEAFE;color:#1E3A8A;}
+.ftag.diesel{background:#EDE9FE;color:#4C1D95;}
+.fprice{font-weight:700;font-size:.84rem;font-family:var(--mono);}
+.fprice-unit{font-size:.58rem;color:var(--muted);}
+
+/* BRAND TABLES */
+.section-title{font-weight:800;font-size:1.05rem;margin-bottom:4px;}
+.section-sub{font-size:.74rem;color:var(--muted);margin-bottom:1.1rem;}
+.btable-wrap{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:1.1rem;}
+.btable-head{padding:.85rem 1.1rem;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.btable-flag{font-size:1.2rem;}
+.btable-cname{font-weight:700;font-size:.9rem;}
+.btable-unit{font-size:.6rem;color:var(--muted);font-family:var(--mono);background:var(--border);padding:2px 8px;border-radius:4px;margin-left:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:.55rem .95rem;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);background:var(--bg);}
+th.right{text-align:right;}
+td{padding:.65rem .95rem;font-size:.82rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--red-bg);}
+.td-brand{display:flex;align-items:center;gap:7px;font-weight:600;}
+.td-price{font-family:var(--mono);font-weight:600;text-align:right;}
+.td-na{color:#CCC;font-size:.68rem;text-align:right;}
+.best{color:var(--green);}
+.best-tag{font-size:.52rem;background:#D1FAE5;color:var(--green);padding:1px 5px;border-radius:3px;margin-left:3px;font-weight:700;vertical-align:middle;}
+
+/* GRADE VIEW */
+.grade-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem;}
+@media(max-width:640px){.grade-grid{grid-template-columns:1fr;}.country-grid{grid-template-columns:1fr;}}
+.grade-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
+.grade-card-head{padding:.9rem 1.1rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--bg);}
+.gpill{padding:3px 14px;border-radius:999px;font-size:.72rem;font-weight:700;font-family:var(--mono);}
+.gpill.ron92{background:#FEF3C7;color:#92400E;}
+.gpill.ron95{background:#D1FAE5;color:#064E3B;}
+.gpill.ron98{background:#DBEAFE;color:#1E3A8A;}
+.gpill.diesel{background:#EDE9FE;color:#4C1D95;}
+.grade-markets{font-size:.68rem;color:var(--muted);margin-left:auto;}
+.grade-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.1rem;border-bottom:1px solid var(--border);}
+.grade-row:last-child{border-bottom:none;}
+.gr-country{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:500;}
+.gr-price{font-family:var(--mono);font-size:.84rem;font-weight:700;}
+.gr-unit{font-size:.58rem;color:var(--muted);font-family:var(--mono);margin-left:3px;}
+
+/* MAP */
+.map-wrap{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
+.map-header{padding:.9rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+.map-title{font-weight:700;font-size:.9rem;}
+.map-sub{font-size:.68rem;color:var(--muted);margin-top:1px;}
+.map-container{position:relative;}
+.map-svg{width:100%;display:block;}
+.map-tooltip{position:absolute;background:#1A1A1A;color:#fff;border-radius:8px;padding:10px 14px;font-size:.72rem;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);transform:translate(-50%,-115%);z-index:10;display:none;}
+.map-tooltip::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom:none;border-top-color:#1A1A1A;}
+.tt-name{font-weight:700;margin-bottom:6px;font-size:.78rem;}
+.tt-row{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:2px;}
+.tt-g{opacity:.6;font-size:.62rem;}
+.tt-v{font-family:var(--mono);font-weight:600;font-size:.7rem;}
+.map-legend{padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:1rem;flex-wrap:wrap;align-items:center;}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--muted);}
+.leg-dot{width:7px;height:7px;border-radius:50%;}
+
+/* TRENDS */
+.trends-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.9rem;}
+.trend-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow);}
+.trend-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.trend-country{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.86rem;}
+.trend-chg{font-size:.7rem;font-family:var(--mono);font-weight:700;}
+.chg-up{color:var(--red);}
+.chg-dn{color:var(--green);}
+.trend-meta{font-size:.62rem;color:var(--muted);margin-bottom:.8rem;font-family:var(--mono);}
+.spark{width:100%;height:70px;display:block;}
+
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;gap:.9rem;}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:.75rem;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-icon">⛽</div>
+      <div>
+        <div class="brand-name">FuelWatch APAC</div>
+        <div class="brand-sub">Petrol Prices · Asia-Pacific</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="timestamp" id="clock"></div>
+      <div class="live-badge loading-badge" id="status-badge">⟳ Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+    <button class="nav-tab" onclick="showTab('brands')">By Brand</button>
+    <button class="nav-tab" onclick="showTab('grades')">By Grade</button>
+    <button class="nav-tab" onclick="showTab('map')">Map</button>
+    <button class="nav-tab" onclick="showTab('trends')">Trends</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- INFO NOTE (hidden initially) -->
+  <div class="info-note" id="info-note" style="display:none">
+    ⛽ <strong>Prices shown</strong> are reference indicatives. Brand differentials are approximate estimates based on national benchmarks.
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="view active" id="view-overview">
+    <div class="loading"><div class="spinner"></div><div class="loading-text">Loading prices…</div></div>
+  </div>
+
+  <!-- BRANDS -->
+  <div class="view" id="view-brands">
+    <div class="filter-bar" id="brands-filter"></div>
+    <div class="section-title">Prices by Brand</div>
+    <div class="section-sub">Green = cheapest per grade. Filter by country above.</div>
+    <div id="brands-content"></div>
+  </div>
+
+  <!-- GRADES -->
+  <div class="view" id="view-grades">
+    <div class="section-title">Prices by Fuel Grade</div>
+    <div class="section-sub">Cheapest available price per country. Local currency per litre.</div>
+    <div class="grade-grid" id="grades-content"></div>
+  </div>
+
+  <!-- MAP -->
+  <div class="view" id="view-map">
+    <div class="map-wrap">
+      <div class="map-header">
+        <div>
+          <div class="map-title">Asia-Pacific Petrol Map</div>
+          <div class="map-sub">Hover a country pin to see pump prices</div>
+        </div>
+        <div class="live-badge"><div class="live-dot"></div>Reference Prices</div>
+      </div>
+      <div class="map-container">
+        <svg class="map-svg" viewBox="0 0 600 460" id="map-svg"
+          style="background:linear-gradient(150deg,#C4DDEF 0%,#9DC8DF 100%)">
+          <!-- Land masses -->
+          <g fill="#D8EACC" stroke="#C0D8A8" stroke-width="1">
+            <path d="M302 228 L330 215 L356 212 L368 226 L372 250 L360 278 L338 290 L315 268 L303 250 Z"/>
+            <path d="M355 245 L395 236 L405 254 L400 278 L382 292 L362 288 L352 270 L350 252 Z"/>
+            <path d="M370 278 L384 272 L390 290 L387 312 L378 322 L370 310 L368 292 Z"/>
+            <path d="M350 302 L386 287 L418 298 L424 315 L392 334 L354 328 Z"/>
+            <path d="M376 334 L422 325 L444 332 L438 346 L392 352 L374 344 Z"/>
+            <path d="M402 272 L438 264 L460 278 L464 310 L448 332 L418 330 L400 312 Z"/>
+            <path d="M428 242 L445 235 L454 244 L450 264 L438 270 L427 262 L424 248 Z"/>
+            <path d="M436 224 L446 220 L452 230 L446 240 L436 238 Z"/>
+            <path d="M390 230 L408 224 L416 238 L413 263 L401 274 L390 260 L388 238 Z"/>
+            <path d="M360 152 L445 143 L498 158 L506 196 L486 218 L452 226 L420 222 L395 218 L364 208 L350 188 Z"/>
+            <path d="M454 196 L476 189 L483 207 L474 224 L458 228 L450 213 Z"/>
+            <path d="M476 183 L498 175 L507 184 L504 202 L484 208 L472 198 Z"/>
+            <path d="M498 170 L512 164 L519 174 L512 184 L498 181 Z"/>
+            <path d="M402 352 L485 341 L540 356 L550 394 L528 420 L484 430 L436 422 L400 400 L384 378 L388 360 Z"/>
+          </g>
+          <!-- Grid lines -->
+          <line x1="0" y1="115" x2="600" y2="115" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
+          <line x1="0" y1="230" x2="600" y2="230" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
+          <line x1="0" y1="345" x2="600" y2="345" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
+          <line x1="150" y1="0" x2="150" y2="460" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
+          <line x1="300" y1="0" x2="300" y2="460" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
+          <line x1="450" y1="0" x2="450" y2="460" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
+          <!-- Pins inserted by JS -->
+          <g id="map-pins"></g>
+        </svg>
+        <div class="map-tooltip" id="map-tooltip"></div>
+      </div>
+      <div class="map-legend">
+        <span style="font-size:.65rem;color:var(--muted);font-weight:700">KEY:</span>
+        <div class="leg-item"><div class="leg-dot" style="background:#E84B1A"></div>Market</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#D8EACC;border:1px solid #C0D8A8"></div>Land</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#9DC8DF"></div>Ocean</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRENDS -->
+  <div class="view" id="view-trends">
+    <div class="filter-bar" id="trends-filter"></div>
+    <div class="section-title">12-Month Price Trends</div>
+    <div class="section-sub">RON 95 / equivalent pump price · Mar 2025 – Feb 2026 · Local currency per litre</div>
+    <div class="trends-grid" id="trends-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────
+const COUNTRIES = [
+  { id:"sg", name:"Singapore", flag:"🇸🇬", unit:"SGD/L", cx:400, cy:305,
+    brands:[
+      {name:"Esso",    logo:"🟡", ron92:3.43, ron95:3.47, ron98:3.97, diesel:3.73},
+      {name:"Shell",   logo:"🔴", ron92:null,  ron95:3.47, ron98:3.99, diesel:3.73},
+      {name:"SPC",     logo:"⚪", ron92:3.43, ron95:3.46, ron98:3.97, diesel:3.56},
+      {name:"Caltex",  logo:"🔵", ron92:3.43, ron95:3.47, ron98:null,  diesel:3.73},
+      {name:"Sinopec", logo:"🟠", ron92:null,  ron95:3.47, ron98:3.97, diesel:3.72},
+    ],
+    trend:[2.85,2.95,3.05,3.15,3.25,3.35,3.40,3.43,3.45,3.47,3.47,3.47] },
+  { id:"my", name:"Malaysia", flag:"🇲🇾", unit:"MYR/L", cx:380, cy:295,
+    brands:[
+      {name:"Petronas",logo:"🟢", ron92:2.05, ron95:2.05, ron98:3.47, diesel:3.35},
+      {name:"Shell",   logo:"🔴", ron92:2.05, ron95:2.05, ron98:3.60, diesel:3.35},
+      {name:"Caltex",  logo:"🔵", ron92:2.05, ron95:2.05, ron98:3.55, diesel:3.35},
+      {name:"BHPetrol",logo:"⚫", ron92:2.05, ron95:2.05, ron98:3.50, diesel:3.35},
+    ],
+    trend:[1.90,1.95,1.95,2.00,2.05,2.05,2.05,2.05,2.05,2.05,2.05,2.05] },
+  { id:"th", name:"Thailand", flag:"🇹🇭", unit:"THB/L", cx:368, cy:265,
+    brands:[
+      {name:"PTT",     logo:"🟦", ron92:35.96, ron95:40.50, ron98:null, diesel:28.79},
+      {name:"Shell",   logo:"🔴", ron92:36.08, ron95:40.75, ron98:null, diesel:28.89},
+      {name:"Bangchak",logo:"🟩", ron92:35.88, ron95:40.40, ron98:null, diesel:28.70},
+    ],
+    trend:[36.5,37.2,38.0,39.1,40.0,40.5,40.8,40.5,40.2,40.5,40.8,40.5] },
+  { id:"ph", name:"Philippines", flag:"🇵🇭", unit:"PHP/L", cx:440, cy:262,
+    brands:[
+      {name:"Shell",  logo:"🔴", ron92:56.20, ron95:60.80, ron98:65.40, diesel:55.30},
+      {name:"Caltex", logo:"🔵", ron92:55.90, ron95:60.50, ron98:65.10, diesel:55.00},
+      {name:"Petron", logo:"🟣", ron92:55.60, ron95:60.20, ron98:64.80, diesel:54.70},
+    ],
+    trend:[53.2,54.5,56.8,58.2,60.1,60.8,61.2,60.5,59.8,60.8,61.5,60.8] },
+  { id:"id", name:"Indonesia", flag:"🇮🇩", unit:"IDR/L", cx:412, cy:318,
+    brands:[
+      {name:"Pertamina",logo:"🔵", ron92:10000, ron95:13500, ron98:15900, diesel:6800},
+      {name:"Shell",    logo:"🔴", ron92:null,  ron95:13990, ron98:16290, diesel:14640},
+      {name:"Vivo",     logo:"🟡", ron92:10000, ron95:13500, ron98:null,  diesel:13590},
+    ],
+    trend:[9500,9500,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000] },
+  { id:"au", name:"Australia", flag:"🇦🇺", unit:"AUD/L", cx:466, cy:380,
+    brands:[
+      {name:"Shell",  logo:"🔴", ron92:null, ron95:2.10, ron98:2.35, diesel:2.18},
+      {name:"BP",     logo:"🟢", ron92:null, ron95:2.12, ron98:2.38, diesel:2.20},
+      {name:"Ampol",  logo:"🟠", ron92:null, ron95:2.05, ron98:2.29, diesel:2.12},
+      {name:"Caltex", logo:"🔵", ron92:null, ron95:2.08, ron98:2.32, diesel:2.15},
+    ],
+    trend:[1.75,1.82,1.90,1.98,2.05,2.10,2.18,2.14,2.08,2.10,2.15,2.10] },
+  { id:"jp", name:"Japan", flag:"🇯🇵", unit:"JPY/L", cx:482, cy:210,
+    brands:[
+      {name:"ENEOS",    logo:"🔵", ron92:null, ron95:175, ron98:186, diesel:154},
+      {name:"Idemitsu", logo:"🔴", ron92:null, ron95:174, ron98:185, diesel:153},
+      {name:"Cosmo Oil",logo:"🟠", ron92:null, ron95:173, ron98:184, diesel:152},
+    ],
+    trend:[158,162,165,168,172,175,178,176,173,175,177,175] },
+  { id:"kr", name:"S. Korea", flag:"🇰🇷", unit:"KRW/L", cx:468, cy:218,
+    brands:[
+      {name:"SK Energy",      logo:"🔴", ron92:1610, ron95:1670, ron98:null, diesel:1520},
+      {name:"GS Caltex",      logo:"🟦", ron92:1605, ron95:1665, ron98:null, diesel:1515},
+      {name:"Hyundai Oilbank",logo:"⚫", ron92:1595, ron95:1655, ron98:null, diesel:1505},
+    ],
+    trend:[1520,1548,1572,1598,1625,1670,1692,1680,1668,1670,1678,1670] },
+  { id:"cn", name:"China", flag:"🇨🇳", unit:"CNY/L", cx:430, cy:228,
+    brands:[
+      {name:"Sinopec",    logo:"🔴", ron92:7.28, ron95:7.68, ron98:8.22, diesel:7.38},
+      {name:"PetroChina", logo:"🔵", ron92:7.28, ron95:7.68, ron98:8.22, diesel:7.38},
+    ],
+    trend:[6.92,7.05,7.18,7.38,7.55,7.68,7.72,7.68,7.62,7.68,7.74,7.68] },
+  { id:"in", name:"India", flag:"🇮🇳", unit:"INR/L", cx:346, cy:258,
+    brands:[
+      {name:"Indian Oil",logo:"🔵", ron92:null, ron95:102.92, ron98:111.30, diesel:89.62},
+      {name:"BPCL",      logo:"🔴", ron92:null, ron95:102.78, ron98:111.10, diesel:89.45},
+      {name:"HPCL",      logo:"🟢", ron92:null, ron95:102.85, ron98:111.20, diesel:89.55},
+    ],
+    trend:[96.8,98.2,100.1,101.5,102.4,102.9,103.2,102.9,102.5,102.9,103.2,102.9] },
+];
+
+const GRADES = ["ron92","ron95","ron98","diesel"];
+const GLABELS = {ron92:"RON 92",ron95:"RON 95",ron98:"RON 98",diesel:"Diesel"};
+const MONTHS = ["Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb"];
+let currentBrandsFilter = "all";
+let currentTrendsFilter = "all";
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────
+function getBest(c, g) {
+  const v = c.brands.map(b=>b[g]).filter(x=>x!=null);
+  return v.length ? Math.min(...v) : null;
+}
+function getBestBrand(c, g) {
+  let b=null, n=null;
+  c.brands.forEach(x=>{if(x[g]!=null&&(b===null||x[g]<b)){b=x[g];n=x.name;}});
+  return n;
+}
+function fmt(p) {
+  if(p==null) return null;
+  if(p>=10000) return p.toLocaleString();
+  if(p>=1000) return p.toLocaleString();
+  if(p>=100) return p.toFixed(0);
+  return p.toFixed(2);
+}
+function cur(c) { return c.unit.split("/")[0]; }
+
+// ─── CLOCK ───────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const d = now.toLocaleDateString("en-SG",{weekday:"short",day:"numeric",month:"short"});
+  const t = now.toLocaleTimeString("en-SG",{hour:"2-digit",minute:"2-digit"});
+  document.getElementById("clock").innerHTML = `${d}<br>${t} SGT`;
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// ─── TAB SWITCHER ─────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("view-"+name).classList.add("active");
+  const tabs = ["overview","brands","grades","map","trends"];
+  document.querySelectorAll(".nav-tab")[tabs.indexOf(name)].classList.add("active");
+}
+
+// ─── OVERVIEW ─────────────────────────────────────────────────────────────
+function renderOverview() {
+  const container = document.getElementById("view-overview");
+  let html = '<div class="country-grid">';
+  COUNTRIES.forEach(c => {
+    html += `<div class="country-card" onclick="showTab('brands');filterBrands('${c.id}')">
+      <div class="card-head">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="card-flag">${c.flag}</span>
+          <div><div class="card-name">${c.name}</div><div class="card-unit">${c.unit}</div></div>
+        </div>
+        <span class="card-count">${c.brands.length} brands</span>
+      </div>`;
+    GRADES.forEach(g => {
+      const p = getBest(c, g);
+      if(p !== null) html += `<div class="fuel-row"><span class="ftag ${g}">${GLABELS[g]}</span><span class="fprice">${fmt(p)} <span class="fprice-unit">${cur(c)}</span></span></div>`;
+    });
+    html += `</div>`;
+  });
+  html += "</div>";
+  container.innerHTML = html;
+}
+
+// ─── BRANDS ───────────────────────────────────────────────────────────────
+function renderBrandsFilter() {
+  const bar = document.getElementById("brands-filter");
+  let html = `<span class="filter-label">Country:</span>
+    <button class="chip ${currentBrandsFilter==='all'?'active':''}" onclick="filterBrands('all')">All</button>`;
+  COUNTRIES.forEach(c => {
+    html += `<button class="chip ${currentBrandsFilter===c.id?'active':''}" onclick="filterBrands('${c.id}')">${c.flag} ${c.name}</button>`;
+  });
+  bar.innerHTML = html;
+}
+function filterBrands(id) {
+  currentBrandsFilter = id;
+  renderBrandsFilter();
+  renderBrandsContent();
+}
+function renderBrandsContent() {
+  const list = currentBrandsFilter === "all" ? COUNTRIES : COUNTRIES.filter(c=>c.id===currentBrandsFilter);
+  let html = "";
+  list.forEach(c => {
+    const has92 = c.brands.some(b=>b.ron92!=null);
+    const has98 = c.brands.some(b=>b.ron98!=null);
+    const b92=getBestBrand(c,"ron92"), b95=getBestBrand(c,"ron95"), b98=getBestBrand(c,"ron98"), bds=getBestBrand(c,"diesel");
+    html += `<div class="btable-wrap">
+      <div class="btable-head">
+        <span class="btable-flag">${c.flag}</span>
+        <span class="btable-cname">${c.name}</span>
+        <span class="btable-unit">${c.unit}</span>
+      </div>
+      <table><thead><tr>
+        <th>Brand</th>
+        ${has92?'<th class="right">RON 92</th>':''}
+        <th class="right">RON 95</th>
+        ${has98?'<th class="right">RON 98</th>':''}
+        <th class="right">Diesel</th>
+      </tr></thead><tbody>`;
+    c.brands.forEach(b => {
+      const cell = (val, isBest) => val!=null
+        ? `<td class="td-price ${isBest?'best':''}">${fmt(val)}${isBest?'<span class="best-tag">BEST</span>':''}</td>`
+        : `<td class="td-na">—</td>`;
+      html += `<tr>
+        <td><div class="td-brand"><span>${b.logo}</span>${b.name}</div></td>
+        ${has92?cell(b.ron92,b.name===b92):''}
+        ${cell(b.ron95,b.name===b95)}
+        ${has98?cell(b.ron98,b.name===b98):''}
+        ${cell(b.diesel,b.name===bds)}
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+  document.getElementById("brands-content").innerHTML = html;
+}
+
+// ─── GRADES ───────────────────────────────────────────────────────────────
+function renderGrades() {
+  const gpills = {ron92:"#FEF3C7|#92400E",ron95:"#D1FAE5|#064E3B",ron98:"#DBEAFE|#1E3A8A",diesel:"#EDE9FE|#4C1D95"};
+  let html = "";
+  GRADES.forEach(g => {
+    const [bg,col] = gpills[g].split("|");
+    const eligible = COUNTRIES.filter(c=>getBest(c,g)!==null);
+    let rows = "";
+    eligible.forEach(c => {
+      const p = getBest(c,g);
+      rows += `<div class="grade-row">
+        <div class="gr-country"><span>${c.flag}</span>${c.name}</div>
+        <div><span class="gr-price">${fmt(p)}</span><span class="gr-unit">${cur(c)}/L</span></div>
+      </div>`;
+    });
+    html += `<div class="grade-card">
+      <div class="grade-card-head">
+        <span class="gpill ${g}" style="background:${bg};color:${col}">${GLABELS[g]}</span>
+        <span class="grade-markets">${eligible.length} markets</span>
+      </div>${rows}</div>`;
+  });
+  document.getElementById("grades-content").innerHTML = html;
+}
+
+// ─── MAP ──────────────────────────────────────────────────────────────────
+function renderMap() {
+  const pinsEl = document.getElementById("map-pins");
+  const tooltip = document.getElementById("map-tooltip");
+  const svg = document.getElementById("map-svg");
+  let pinsHTML = "";
+  COUNTRIES.forEach(c => {
+    pinsHTML += `
+      <g class="map-pin" data-id="${c.id}" style="cursor:pointer">
+        <circle class="pin-ring" cx="${c.cx}" cy="${c.cy}" r="18" fill="rgba(232,75,26,.12)" opacity="0"/>
+        <circle class="pin-circle" cx="${c.cx}" cy="${c.cy}" r="9" fill="#fff" stroke="#E84B1A" stroke-width="2.5" style="transition:all .2s"/>
+        <text x="${c.cx}" y="${c.cy+4}" text-anchor="middle" font-size="9" fill="#E84B1A" font-weight="700" style="pointer-events:none;font-family:sans-serif">${c.flag}</text>
+        <text class="pin-label" x="${c.cx}" y="${c.cy+21}" text-anchor="middle" font-size="7" fill="#555" style="pointer-events:none;font-family:monospace">${c.name.split(" ")[0]}</text>
+      </g>`;
+  });
+  pinsEl.innerHTML = pinsHTML;
+
+  document.querySelectorAll(".map-pin").forEach(pin => {
+    const id = pin.dataset.id;
+    const c = COUNTRIES.find(x=>x.id===id);
+    pin.addEventListener("mouseenter", e => {
+      pin.querySelector(".pin-circle").setAttribute("r","13");
+      pin.querySelector(".pin-circle").setAttribute("fill","#E84B1A");
+      pin.querySelector(".pin-circle").setAttribute("stroke-width","0");
+      pin.querySelector(".pin-ring").setAttribute("opacity","1");
+      pin.querySelector(".pin-label").style.display="none";
+      let ttHTML = `<div class="tt-name">${c.flag} ${c.name}</div>`;
+      GRADES.forEach(g=>{const p=getBest(c,g);if(p!==null)ttHTML+=`<div class="tt-row"><span class="tt-g">${GLABELS[g]}</span><span class="tt-v">${fmt(p)} ${cur(c)}</span></div>`;});
+      tooltip.innerHTML = ttHTML;
+      const rect = svg.getBoundingClientRect();
+      const pctX = ((c.cx / 600) * rect.width + rect.left - rect.left);
+      const pctY = ((c.cy / 460) * rect.height);
+      tooltip.style.left = ((c.cx / 600)*100)+"%";
+      tooltip.style.top = ((c.cy / 460)*100)+"%";
+      tooltip.style.display = "block";
+    });
+    pin.addEventListener("mouseleave", () => {
+      pin.querySelector(".pin-circle").setAttribute("r","9");
+      pin.querySelector(".pin-circle").setAttribute("fill","#fff");
+      pin.querySelector(".pin-circle").setAttribute("stroke-width","2.5");
+      pin.querySelector(".pin-ring").setAttribute("opacity","0");
+      pin.querySelector(".pin-label").style.display="";
+      tooltip.style.display="none";
+    });
+  });
+}
+
+// ─── TRENDS ───────────────────────────────────────────────────────────────
+function renderTrendsFilter() {
+  const bar = document.getElementById("trends-filter");
+  let html = `<span class="filter-label">Country:</span>
+    <button class="chip ${currentTrendsFilter==='all'?'active':''}" onclick="filterTrends('all')">All</button>`;
+  COUNTRIES.forEach(c => {
+    html += `<button class="chip ${currentTrendsFilter===c.id?'active':''}" onclick="filterTrends('${c.id}')">${c.flag} ${c.name}</button>`;
+  });
+  bar.innerHTML = html;
+}
+function filterTrends(id) {
+  currentTrendsFilter = id;
+  renderTrendsFilter();
+  renderTrendsContent();
+}
+function renderTrendsContent() {
+  const list = currentTrendsFilter==="all" ? COUNTRIES : COUNTRIES.filter(c=>c.id===currentTrendsFilter);
+  let html = "";
+  list.forEach(c => {
+    const first=c.trend[0], last=c.trend[11];
+    const chg = ((last-first)/first*100).toFixed(1);
+    const up = chg > 0;
+    const min = Math.min(...c.trend), max = Math.max(...c.trend);
+    const range = max - min || 1;
+    const W=280, H=60, pad=4;
+    const pts = c.trend.map((v,i)=>{
+      const x = pad + (i/(c.trend.length-1))*(W-pad*2);
+      const y = H - pad - ((v-min)/range)*(H-pad*2);
+      return `${x},${y}`;
+    }).join(" ");
+    const fillPts = `${pad},${H-pad} ` + pts + ` ${W-pad},${H-pad}`;
+    html += `<div class="trend-card">
+      <div class="trend-head">
+        <div class="trend-country"><span>${c.flag}</span>${c.name}</div>
+        <div class="trend-chg ${up?'chg-up':'chg-dn'}">${up?'▲':'▼'} ${Math.abs(chg)}%</div>
+      </div>
+      <div class="trend-meta">RON 95 equiv · ${c.unit} · 12 months</div>
+      <svg class="spark" viewBox="0 0 ${W} ${H}" style="overflow:visible">
+        <defs>
+          <linearGradient id="sg${c.id}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${up?'#E84B1A':'#059669'}" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="${up?'#E84B1A':'#059669'}" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polygon points="${fillPts}" fill="url(#sg${c.id})"/>
+        <polyline points="${pts}" fill="none" stroke="${up?'#E84B1A':'#059669'}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        ${c.trend.map((v,i)=>{
+          const x=pad+(i/(c.trend.length-1))*(W-pad*2);
+          const y=H-pad-((v-min)/range)*(H-pad*2);
+          const lbl=MONTHS[i];
+          return i%3===0?`<text x="${x}" y="${H+12}" text-anchor="middle" font-size="8" fill="#AAA59E" font-family="monospace">${lbl}</text>`:'';
+        }).join('')}
+      </svg>
+    </div>`;
+  });
+  document.getElementById("trends-content").innerHTML = html;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+function init() {
+  renderOverview();
+  renderBrandsFilter();
+  renderBrandsContent();
+  renderGrades();
+  renderMap();
+  renderTrendsFilter();
+  renderTrendsContent();
+  document.getElementById("info-note").style.display = "block";
+  const badge = document.getElementById("status-badge");
+  badge.className = "live-badge";
+  badge.innerHTML = '<div class="live-dot"></div>Live';
+}
+
+init();
+</script>
+</body>
+</html>
