@@ -113,15 +113,14 @@ tr:hover td{background:var(--red-bg);}
 .map-header{padding:.9rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
 .map-title{font-weight:700;font-size:.9rem;}
 .map-sub{font-size:.68rem;color:var(--muted);margin-top:1px;}
-.map-container{position:relative;}
-.map-svg{width:100%;display:block;}
-.map-tooltip{position:absolute;background:#1A1A1A;color:#fff;border-radius:8px;padding:10px 14px;font-size:.72rem;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);transform:translate(-50%,-115%);z-index:10;display:none;}
-.map-tooltip::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom:none;border-top-color:#1A1A1A;}
-.tt-name{font-weight:700;margin-bottom:6px;font-size:.78rem;}
-.tt-row{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:2px;}
-.tt-g{opacity:.6;font-size:.62rem;}
-.tt-v{font-family:var(--mono);font-weight:600;font-size:.7rem;}
+.map-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;padding:.85rem 1.1rem;border-bottom:1px solid var(--border);background:var(--bg);}
+.map-country-btn{padding:5px 12px;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap;font-family:var(--font);}
+.map-country-btn:hover{border-color:var(--red);color:var(--red);}
+.map-country-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
+#gmap{width:100%;height:520px;display:block;}
 .map-legend{padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:1rem;flex-wrap:wrap;align-items:center;}
+.map-api-notice{background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:1rem 1.25rem;font-size:.75rem;color:#92400E;margin:.75rem 1.1rem;line-height:1.7;}
+.map-api-notice code{background:#FEF3C7;padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.7rem;}
 .leg-item{display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--muted);}
 .leg-dot{width:7px;height:7px;border-radius:50%;}
 
@@ -160,6 +159,8 @@ tr:hover td{background:var(--red-bg);}
 .footer-brand a:hover{text-decoration:underline;}
 .footer-divider{height:1px;background:var(--border);width:100%;}
 </style>
+<!-- Google Maps API — replace AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI with your actual key -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI&libraries=places&callback=Function.prototype" async defer></script>
 </head>
 <body>
 
@@ -231,48 +232,32 @@ tr:hover td{background:var(--red-bg);}
     <div class="map-wrap">
       <div class="map-header">
         <div>
-          <div class="map-title">Asia-Pacific Petrol Map</div>
-          <div class="map-sub">Hover a country pin to see pump prices</div>
+          <div class="map-title">⛽ Petrol Station Locator</div>
+          <div class="map-sub">Select a country to browse real petrol stations near major cities</div>
         </div>
-        <div class="live-badge"><div class="live-dot"></div>Reference Prices</div>
+        <div class="live-badge"><div class="live-dot"></div>Powered by Google Maps</div>
       </div>
-      <div class="map-container">
-        <svg class="map-svg" viewBox="0 0 600 460" id="map-svg"
-          style="background:linear-gradient(150deg,#C4DDEF 0%,#9DC8DF 100%)">
-          <!-- Land masses -->
-          <g fill="#D8EACC" stroke="#C0D8A8" stroke-width="1">
-            <path d="M302 228 L330 215 L356 212 L368 226 L372 250 L360 278 L338 290 L315 268 L303 250 Z"/>
-            <path d="M355 245 L395 236 L405 254 L400 278 L382 292 L362 288 L352 270 L350 252 Z"/>
-            <path d="M370 278 L384 272 L390 290 L387 312 L378 322 L370 310 L368 292 Z"/>
-            <path d="M350 302 L386 287 L418 298 L424 315 L392 334 L354 328 Z"/>
-            <path d="M376 334 L422 325 L444 332 L438 346 L392 352 L374 344 Z"/>
-            <path d="M402 272 L438 264 L460 278 L464 310 L448 332 L418 330 L400 312 Z"/>
-            <path d="M428 242 L445 235 L454 244 L450 264 L438 270 L427 262 L424 248 Z"/>
-            <path d="M436 224 L446 220 L452 230 L446 240 L436 238 Z"/>
-            <path d="M390 230 L408 224 L416 238 L413 263 L401 274 L390 260 L388 238 Z"/>
-            <path d="M360 152 L445 143 L498 158 L506 196 L486 218 L452 226 L420 222 L395 218 L364 208 L350 188 Z"/>
-            <path d="M454 196 L476 189 L483 207 L474 224 L458 228 L450 213 Z"/>
-            <path d="M476 183 L498 175 L507 184 L504 202 L484 208 L472 198 Z"/>
-            <path d="M498 170 L512 164 L519 174 L512 184 L498 181 Z"/>
-            <path d="M402 352 L485 341 L540 356 L550 394 L528 420 L484 430 L436 422 L400 400 L384 378 L388 360 Z"/>
-          </g>
-          <!-- Grid lines -->
-          <line x1="0" y1="115" x2="600" y2="115" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
-          <line x1="0" y1="230" x2="600" y2="230" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
-          <line x1="0" y1="345" x2="600" y2="345" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
-          <line x1="150" y1="0" x2="150" y2="460" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
-          <line x1="300" y1="0" x2="300" y2="460" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
-          <line x1="450" y1="0" x2="450" y2="460" stroke="rgba(255,255,255,.1)" stroke-width=".5"/>
-          <!-- Pins inserted by JS -->
-          <g id="map-pins"></g>
-        </svg>
-        <div class="map-tooltip" id="map-tooltip"></div>
+
+      <!-- API KEY NOTICE — remove this block once you add your key -->
+      <div class="map-api-notice" id="api-notice">
+        <strong>🔑 Google Maps API Key Required</strong><br>
+        To show live petrol stations, add your Google Maps API key:<br>
+        1. Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--red)">console.cloud.google.com</a> → Create API Key<br>
+        2. Enable <strong>Maps JavaScript API</strong> and <strong>Places API</strong><br>
+        3. Open <code>index.html</code>, find <code>AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI</code> and replace it with your key<br>
+        4. Free tier: 28,000 map loads/month + 5,000 Places requests/month — more than enough
       </div>
+
+      <!-- COUNTRY SELECTOR -->
+      <div class="map-controls" id="map-country-controls"></div>
+
+      <!-- GOOGLE MAP -->
+      <div id="gmap"></div>
+
       <div class="map-legend">
         <span style="font-size:.65rem;color:var(--muted);font-weight:700">KEY:</span>
-        <div class="leg-item"><div class="leg-dot" style="background:#E84B1A"></div>Market</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#D8EACC;border:1px solid #C0D8A8"></div>Land</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#9DC8DF"></div>Ocean</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#E84B1A"></div>Petrol Station</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#3B82F6"></div>Selected Country Center</div>
       </div>
     </div>
   </div>
@@ -409,6 +394,7 @@ function showTab(name) {
   document.getElementById("view-"+name).classList.add("active");
   const tabs = ["overview","brands","grades","map","trends"];
   document.querySelectorAll(".nav-tab")[tabs.indexOf(name)].classList.add("active");
+  if (name === 'map') setTimeout(renderMap, 50);
 }
 
 // ─── OVERVIEW ─────────────────────────────────────────────────────────────
@@ -512,51 +498,164 @@ function renderGrades() {
   document.getElementById("grades-content").innerHTML = html;
 }
 
-// ─── MAP ──────────────────────────────────────────────────────────────────
-function renderMap() {
-  const pinsEl = document.getElementById("map-pins");
-  const tooltip = document.getElementById("map-tooltip");
-  const svg = document.getElementById("map-svg");
-  let pinsHTML = "";
-  COUNTRIES.forEach(c => {
-    pinsHTML += `
-      <g class="map-pin" data-id="${c.id}" style="cursor:pointer">
-        <circle class="pin-ring" cx="${c.cx}" cy="${c.cy}" r="18" fill="rgba(232,75,26,.12)" opacity="0"/>
-        <circle class="pin-circle" cx="${c.cx}" cy="${c.cy}" r="9" fill="#fff" stroke="#E84B1A" stroke-width="2.5" style="transition:all .2s"/>
-        <text x="${c.cx}" y="${c.cy+4}" text-anchor="middle" font-size="9" fill="#E84B1A" font-weight="700" style="pointer-events:none;font-family:sans-serif">${c.flag}</text>
-        <text class="pin-label" x="${c.cx}" y="${c.cy+21}" text-anchor="middle" font-size="7" fill="#555" style="pointer-events:none;font-family:monospace">${c.name.split(" ")[0]}</text>
-      </g>`;
-  });
-  pinsEl.innerHTML = pinsHTML;
+// ─── MAP — Google Maps Petrol Station Locator ────────────────────────────
+const MAP_COUNTRIES = [
+  { id:"sg", name:"Singapore", flag:"🇸🇬", lat:1.3521,  lng:103.8198, zoom:12 },
+  { id:"my", name:"Malaysia",  flag:"🇲🇾", lat:3.1390,  lng:101.6869, zoom:11 },
+  { id:"th", name:"Thailand",  flag:"🇹🇭", lat:13.7563, lng:100.5018, zoom:12 },
+  { id:"ph", name:"Philippines",flag:"🇵🇭",lat:14.5995, lng:120.9842, zoom:12 },
+  { id:"id", name:"Indonesia", flag:"🇮🇩", lat:-6.2088, lng:106.8456, zoom:12 },
+  { id:"au", name:"Australia", flag:"🇦🇺", lat:-33.8688,lng:151.2093, zoom:12 },
+  { id:"jp", name:"Japan",     flag:"🇯🇵", lat:35.6762, lng:139.6503, zoom:13 },
+  { id:"kr", name:"S. Korea",  flag:"🇰🇷", lat:37.5665, lng:126.9780, zoom:13 },
+  { id:"in", name:"India",     flag:"🇮🇳", lat:28.6139, lng:77.2090,  zoom:12 },
+  { id:"vn", name:"Vietnam",   flag:"🇻🇳", lat:21.0278, lng:105.8342, zoom:13 },
+];
 
-  document.querySelectorAll(".map-pin").forEach(pin => {
-    const id = pin.dataset.id;
-    const c = COUNTRIES.find(x=>x.id===id);
-    pin.addEventListener("mouseenter", e => {
-      pin.querySelector(".pin-circle").setAttribute("r","13");
-      pin.querySelector(".pin-circle").setAttribute("fill","#E84B1A");
-      pin.querySelector(".pin-circle").setAttribute("stroke-width","0");
-      pin.querySelector(".pin-ring").setAttribute("opacity","1");
-      pin.querySelector(".pin-label").style.display="none";
-      let ttHTML = `<div class="tt-name">${c.flag} ${c.name}</div>`;
-      GRADES.forEach(g=>{const p=getBest(c,g);if(p!==null)ttHTML+=`<div class="tt-row"><span class="tt-g">${GLABELS[g]}</span><span class="tt-v">${fmt(convertPrice(p,c.id))} ${currentCurrency==='local'?cur(c):getDisplayCurrencySymbol()}</span></div>`;});
-      tooltip.innerHTML = ttHTML;
-      const rect = svg.getBoundingClientRect();
-      const pctX = ((c.cx / 600) * rect.width + rect.left - rect.left);
-      const pctY = ((c.cy / 460) * rect.height);
-      tooltip.style.left = ((c.cx / 600)*100)+"%";
-      tooltip.style.top = ((c.cy / 460)*100)+"%";
-      tooltip.style.display = "block";
-    });
-    pin.addEventListener("mouseleave", () => {
-      pin.querySelector(".pin-circle").setAttribute("r","9");
-      pin.querySelector(".pin-circle").setAttribute("fill","#fff");
-      pin.querySelector(".pin-circle").setAttribute("stroke-width","2.5");
-      pin.querySelector(".pin-ring").setAttribute("opacity","0");
-      pin.querySelector(".pin-label").style.display="";
-      tooltip.style.display="none";
-    });
+let gmap = null;
+let mapInitialized = false;
+let currentMapCountry = MAP_COUNTRIES[0];
+let stationMarkers = [];
+let placesService = null;
+let infoWindow = null;
+
+function initMap() {
+  if (mapInitialized) return;
+  mapInitialized = true;
+
+  const mapEl = document.getElementById('gmap');
+  gmap = new google.maps.Map(mapEl, {
+    center: { lat: currentMapCountry.lat, lng: currentMapCountry.lng },
+    zoom: currentMapCountry.zoom,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+    styles: [
+      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+      { featureType: "transit", stylers: [{ visibility: "simplified" }] }
+    ]
   });
+
+  placesService = new google.maps.places.PlacesService(gmap);
+  infoWindow = new google.maps.InfoWindow();
+
+  // Build country selector buttons
+  const controls = document.getElementById('map-country-controls');
+  let btnHtml = '<span style="font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px;">Jump to:</span>';
+  MAP_COUNTRIES.forEach(c => {
+    const active = c.id === currentMapCountry.id ? 'active' : '';
+    btnHtml += `<button class="map-country-btn ${active}" onclick="jumpToCountry('${c.id}')">${c.flag} ${c.name}</button>`;
+  });
+  controls.innerHTML = btnHtml;
+
+  // Load stations for default country
+  loadPetrolStations(currentMapCountry);
+}
+
+function jumpToCountry(id) {
+  const c = MAP_COUNTRIES.find(x => x.id === id);
+  if (!c || !gmap) return;
+  currentMapCountry = c;
+
+  // Update active button
+  document.querySelectorAll('.map-country-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.includes(c.name));
+  });
+
+  gmap.setCenter({ lat: c.lat, lng: c.lng });
+  gmap.setZoom(c.zoom);
+  clearStationMarkers();
+  loadPetrolStations(c);
+}
+
+function clearStationMarkers() {
+  stationMarkers.forEach(m => m.setMap(null));
+  stationMarkers = [];
+  if (infoWindow) infoWindow.close();
+}
+
+function loadPetrolStations(country) {
+  if (!placesService) return;
+
+  const request = {
+    location: new google.maps.LatLng(country.lat, country.lng),
+    radius: 8000,
+    type: 'gas_station'
+  };
+
+  placesService.nearbySearch(request, (results, status) => {
+    if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+      results.forEach(place => addStationMarker(place, country));
+    }
+  });
+}
+
+function addStationMarker(place, country) {
+  if (!place.geometry || !place.geometry.location) return;
+
+  const marker = new google.maps.Marker({
+    map: gmap,
+    position: place.geometry.location,
+    title: place.name,
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 8,
+      fillColor: '#E84B1A',
+      fillOpacity: 0.9,
+      strokeColor: '#fff',
+      strokeWeight: 2,
+    }
+  });
+
+  marker.addListener('click', () => {
+    // Get price info for this country
+    const countryData = COUNTRIES.find(c => c.id === country.id);
+    let priceHTML = '';
+    if (countryData) {
+      const grades = ['ron95','ron98','diesel'];
+      grades.forEach(g => {
+        const p = getBest(countryData, g);
+        const cp = convertPrice(p, country.id);
+        if (cp !== null) {
+          const unit = currentCurrency === 'local' ? countryData.unit.split('/')[0] : getDisplayCurrencySymbol();
+          priceHTML += `<div style="display:flex;justify-content:space-between;gap:16px;margin-top:3px;">
+            <span style="color:#888;font-size:12px">${GLABELS[g]}</span>
+            <span style="font-weight:700;font-size:12px;font-family:monospace">${fmt(cp)} ${unit}</span>
+          </div>`;
+        }
+      });
+    }
+
+    const rating = place.rating ? `<span style="color:#F59E0B">★</span> ${place.rating} · ` : '';
+    const open = place.opening_hours ? (place.opening_hours.open_now ? '<span style="color:#059669;font-size:11px">● Open now</span>' : '<span style="color:#E84B1A;font-size:11px">● Closed</span>') : '';
+
+    infoWindow.setContent(`
+      <div style="font-family:'Outfit',sans-serif;padding:4px;min-width:180px;max-width:240px">
+        <div style="font-weight:800;font-size:14px;margin-bottom:4px">${place.name}</div>
+        <div style="font-size:11px;color:#888;margin-bottom:6px">${rating}${open}</div>
+        ${place.vicinity ? `<div style="font-size:11px;color:#555;margin-bottom:8px">📍 ${place.vicinity}</div>` : ''}
+        ${priceHTML ? `<div style="border-top:1px solid #eee;padding-top:6px;margin-top:4px"><div style="font-size:10px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Ref. Pump Prices</div>${priceHTML}</div>` : ''}
+      </div>
+    `);
+    infoWindow.open(gmap, marker);
+  });
+
+  stationMarkers.push(marker);
+}
+
+// Called when map tab is clicked — lazy-init the map
+function renderMap() {
+  if (typeof google === 'undefined') {
+    // Google Maps not loaded yet — check if API key is set
+    const script = document.querySelector('script[src*="maps.googleapis.com"]');
+    if (!script || script.src.includes('AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI')) {
+      document.getElementById('api-notice').style.display = 'block';
+      document.getElementById('gmap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#7A7570;font-size:.82rem;flex-direction:column;gap:.5rem;background:#F7F6F2"><span style="font-size:2rem">🗺️</span>Add your Google Maps API key to enable the station locator</div>';
+    }
+    return;
+  }
+  document.getElementById('api-notice').style.display = 'none';
+  setTimeout(initMap, 100);
 }
 
 // ─── TRENDS ───────────────────────────────────────────────────────────────
@@ -629,7 +728,6 @@ const FX_TO_USD = {
   au: 1/1.55,   // AUD → USD
   jp: 1/149,    // JPY → USD
   kr: 1/1340,   // KRW → USD
-  cn: 1/7.24,   // CNY → USD
   in: 1/83.5,   // INR → USD
   vn: 1/25400,  // VND → USD
 };

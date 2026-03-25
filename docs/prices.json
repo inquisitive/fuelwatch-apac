@@ -186,20 +186,6 @@
         "diesel": 1505
       }
     },
-    "cn": {
-      "Sinopec": {
-        "ron92": 7.28,
-        "ron95": 7.68,
-        "ron98": 8.22,
-        "diesel": 7.38
-      },
-      "PetroChina": {
-        "ron92": 7.28,
-        "ron95": 7.68,
-        "ron98": 8.22,
-        "diesel": 7.38
-      }
-    },
     "in": {
       "Indian Oil": {
         "ron92": null,
