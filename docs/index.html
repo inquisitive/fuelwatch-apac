@@ -117,10 +117,8 @@ tr:hover td{background:var(--red-bg);}
 .map-country-btn{padding:5px 12px;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap;font-family:var(--font);}
 .map-country-btn:hover{border-color:var(--red);color:var(--red);}
 .map-country-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
-#gmap{width:100%;height:520px;display:block;}
 .map-legend{padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:1rem;flex-wrap:wrap;align-items:center;}
-.map-api-notice{background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:1rem 1.25rem;font-size:.75rem;color:#92400E;margin:.75rem 1.1rem;line-height:1.7;}
-.map-api-notice code{background:#FEF3C7;padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.7rem;}
+
 .leg-item{display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--muted);}
 .leg-dot{width:7px;height:7px;border-radius:50%;}
 
@@ -159,8 +157,6 @@ tr:hover td{background:var(--red-bg);}
 .footer-brand a:hover{text-decoration:underline;}
 .footer-divider{height:1px;background:var(--border);width:100%;}
 </style>
-<!-- Google Maps API — replace AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI with your actual key -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI&libraries=places&callback=Function.prototype" async defer></script>
 </head>
 <body>
 
@@ -232,37 +228,17 @@ tr:hover td{background:var(--red-bg);}
     <div class="map-wrap">
       <div class="map-header">
         <div>
-          <div class="map-title">⛽ Petrol Station Locator</div>
-          <div class="map-sub">Select a country to browse real petrol stations near major cities</div>
+          <div class="map-title">⛽ Petrol Stations by Country</div>
+          <div class="map-sub">Select a country to see brands, prices and station finder links</div>
         </div>
-        <div class="live-badge"><div class="live-dot"></div>Powered by Google Maps</div>
+        <div class="live-badge"><div class="live-dot"></div>Reference Data</div>
       </div>
-
-      <!-- API KEY NOTICE — remove this block once you add your key -->
-      <div class="map-api-notice" id="api-notice">
-        <strong>🔑 Google Maps API Key Required</strong><br>
-        To show live petrol stations, add your Google Maps API key:<br>
-        1. Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--red)">console.cloud.google.com</a> → Create API Key<br>
-        2. Enable <strong>Maps JavaScript API</strong> and <strong>Places API</strong><br>
-        3. Open <code>index.html</code>, find <code>AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI</code> and replace it with your key<br>
-        4. Free tier: 28,000 map loads/month + 5,000 Places requests/month — more than enough
-      </div>
-
-      <!-- COUNTRY SELECTOR -->
       <div class="map-controls" id="map-country-controls"></div>
-
-      <!-- GOOGLE MAP -->
-      <div id="gmap"></div>
-
-      <div class="map-legend">
-        <span style="font-size:.65rem;color:var(--muted);font-weight:700">KEY:</span>
-        <div class="leg-item"><div class="leg-dot" style="background:#E84B1A"></div>Petrol Station</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#3B82F6"></div>Selected Country Center</div>
-      </div>
+      <div id="map-country-detail" style="padding:1.25rem"></div>
     </div>
   </div>
 
-  <!-- TRENDS -->
+    <!-- TRENDS -->
   <div class="view" id="view-trends">
     <div class="filter-bar" id="trends-filter"></div>
     <div class="section-title">12-Month Price Trends</div>
@@ -274,9 +250,7 @@ tr:hover td{background:var(--red-bg);}
 
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────
-// Prices loaded dynamically from prices.json (updated daily by GitHub Actions)
-// COUNTRIES is populated by loadPrices() below
-let COUNTRIES = [
+const COUNTRIES = [
   { id:"sg", name:"Singapore", flag:"🇸🇬", unit:"SGD/L", cx:400, cy:305,
     brands:[
       {name:"Esso",    logo:"🟡", ron92:3.43, ron95:3.47, ron98:3.97, diesel:3.73},
@@ -498,164 +472,186 @@ function renderGrades() {
   document.getElementById("grades-content").innerHTML = html;
 }
 
-// ─── MAP — Google Maps Petrol Station Locator ────────────────────────────
+// ─── MAP — Country Petrol Station Browser ────────────────────────────────
 const MAP_COUNTRIES = [
-  { id:"sg", name:"Singapore", flag:"🇸🇬", lat:1.3521,  lng:103.8198, zoom:12 },
-  { id:"my", name:"Malaysia",  flag:"🇲🇾", lat:3.1390,  lng:101.6869, zoom:11 },
-  { id:"th", name:"Thailand",  flag:"🇹🇭", lat:13.7563, lng:100.5018, zoom:12 },
-  { id:"ph", name:"Philippines",flag:"🇵🇭",lat:14.5995, lng:120.9842, zoom:12 },
-  { id:"id", name:"Indonesia", flag:"🇮🇩", lat:-6.2088, lng:106.8456, zoom:12 },
-  { id:"au", name:"Australia", flag:"🇦🇺", lat:-33.8688,lng:151.2093, zoom:12 },
-  { id:"jp", name:"Japan",     flag:"🇯🇵", lat:35.6762, lng:139.6503, zoom:13 },
-  { id:"kr", name:"S. Korea",  flag:"🇰🇷", lat:37.5665, lng:126.9780, zoom:13 },
-  { id:"in", name:"India",     flag:"🇮🇳", lat:28.6139, lng:77.2090,  zoom:12 },
-  { id:"vn", name:"Vietnam",   flag:"🇻🇳", lat:21.0278, lng:105.8342, zoom:13 },
+  { id:"sg", name:"Singapore", flag:"🇸🇬", city:"Singapore City",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+singapore",
+    note:"Stations island-wide. Major brands: Esso, Shell, SPC, Caltex, Sinopec.",
+    brands:[
+      {name:"Esso",    logo:"🟡", stationCount:"50+", findUrl:"https://www.google.com/maps/search/esso+petrol+station+singapore"},
+      {name:"Shell",   logo:"🔴", stationCount:"60+", findUrl:"https://www.google.com/maps/search/shell+petrol+station+singapore"},
+      {name:"SPC",     logo:"⚪", stationCount:"40+", findUrl:"https://www.google.com/maps/search/spc+petrol+station+singapore"},
+      {name:"Caltex",  logo:"🔵", stationCount:"35+", findUrl:"https://www.google.com/maps/search/caltex+petrol+station+singapore"},
+      {name:"Sinopec", logo:"🟠", stationCount:"15+", findUrl:"https://www.google.com/maps/search/sinopec+petrol+station+singapore"},
+    ]},
+  { id:"my", name:"Malaysia", flag:"🇲🇾", city:"Kuala Lumpur",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+malaysia",
+    note:"Nationwide network. RON 95 Budi subsidy RM 1.99 for eligible citizens.",
+    brands:[
+      {name:"Petronas",logo:"🟢", stationCount:"1,000+", findUrl:"https://www.google.com/maps/search/petronas+petrol+station+malaysia"},
+      {name:"Shell",   logo:"🔴", stationCount:"950+",  findUrl:"https://www.google.com/maps/search/shell+petrol+station+malaysia"},
+      {name:"Caltex",  logo:"🔵", stationCount:"600+",  findUrl:"https://www.google.com/maps/search/caltex+petrol+station+malaysia"},
+      {name:"BHPetrol",logo:"⚫", stationCount:"300+",  findUrl:"https://www.google.com/maps/search/bhpetrol+station+malaysia"},
+    ]},
+  { id:"th", name:"Thailand", flag:"🇹🇭", city:"Bangkok",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+thailand",
+    note:"PTT is the dominant state-owned brand. Prices adjusted weekly by government.",
+    brands:[
+      {name:"PTT",     logo:"🟦", stationCount:"1,800+", findUrl:"https://www.google.com/maps/search/ptt+petrol+station+thailand"},
+      {name:"Shell",   logo:"🔴", stationCount:"700+",  findUrl:"https://www.google.com/maps/search/shell+petrol+station+thailand"},
+      {name:"Bangchak",logo:"🟩", stationCount:"1,100+",findUrl:"https://www.google.com/maps/search/bangchak+petrol+station+thailand"},
+    ]},
+  { id:"ph", name:"Philippines", flag:"🇵🇭", city:"Manila",
+    searchUrl:"https://www.google.com/maps/search/gas+station+philippines",
+    note:"DOE adjusts prices weekly. Prices vary slightly by region.",
+    brands:[
+      {name:"Shell",  logo:"🔴", stationCount:"1,100+", findUrl:"https://www.google.com/maps/search/shell+gas+station+philippines"},
+      {name:"Caltex", logo:"🔵", stationCount:"800+",  findUrl:"https://www.google.com/maps/search/caltex+gas+station+philippines"},
+      {name:"Petron", logo:"🟣", stationCount:"2,300+", findUrl:"https://www.google.com/maps/search/petron+gas+station+philippines"},
+    ]},
+  { id:"id", name:"Indonesia", flag:"🇮🇩", city:"Jakarta",
+    searchUrl:"https://www.google.com/maps/search/spbu+pertamina+indonesia",
+    note:"Pertalite (RON 92) is subsidised. Pertamina operates the largest network.",
+    brands:[
+      {name:"Pertamina",logo:"🔵", stationCount:"7,000+", findUrl:"https://www.google.com/maps/search/spbu+pertamina+indonesia"},
+      {name:"Shell",    logo:"🔴", stationCount:"100+",  findUrl:"https://www.google.com/maps/search/shell+spbu+indonesia"},
+      {name:"Vivo",     logo:"🟡", stationCount:"50+",   findUrl:"https://www.google.com/maps/search/vivo+spbu+indonesia"},
+    ]},
+  { id:"au", name:"Australia", flag:"🇦🇺", city:"Sydney",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+australia",
+    note:"Prices follow a weekly cycle. Tuesday/Wednesday typically cheapest.",
+    brands:[
+      {name:"Shell",  logo:"🔴", stationCount:"700+",  findUrl:"https://www.google.com/maps/search/shell+petrol+station+australia"},
+      {name:"BP",     logo:"🟢", stationCount:"1,400+", findUrl:"https://www.google.com/maps/search/bp+petrol+station+australia"},
+      {name:"Ampol",  logo:"🟠", stationCount:"1,900+", findUrl:"https://www.google.com/maps/search/ampol+petrol+station+australia"},
+      {name:"Caltex", logo:"🔵", stationCount:"500+",  findUrl:"https://www.google.com/maps/search/caltex+petrol+station+australia"},
+    ]},
+  { id:"jp", name:"Japan", flag:"🇯🇵", city:"Tokyo",
+    searchUrl:"https://www.google.com/maps/search/ガソリンスタンド+tokyo",
+    note:"METI publishes weekly average prices. Tax makes up ~50% of pump price.",
+    brands:[
+      {name:"ENEOS",    logo:"🔵", stationCount:"12,000+", findUrl:"https://www.google.com/maps/search/eneos+gas+station+japan"},
+      {name:"Idemitsu", logo:"🔴", stationCount:"6,000+",  findUrl:"https://www.google.com/maps/search/idemitsu+gas+station+japan"},
+      {name:"Cosmo Oil",logo:"🟠", stationCount:"3,400+",  findUrl:"https://www.google.com/maps/search/cosmo+gas+station+japan"},
+    ]},
+  { id:"kr", name:"S. Korea", flag:"🇰🇷", city:"Seoul",
+    searchUrl:"https://www.google.com/maps/search/주유소+seoul",
+    note:"OPINET tracks daily prices. Tax accounts for about 55% of retail price.",
+    brands:[
+      {name:"SK Energy",      logo:"🔴", stationCount:"4,700+", findUrl:"https://www.google.com/maps/search/sk+주유소+korea"},
+      {name:"GS Caltex",      logo:"🟦", stationCount:"4,600+", findUrl:"https://www.google.com/maps/search/gs칼텍스+주유소+korea"},
+      {name:"Hyundai Oilbank",logo:"⚫", stationCount:"2,700+", findUrl:"https://www.google.com/maps/search/hyundai+oilbank+주유소+korea"},
+    ]},
+  { id:"in", name:"India", flag:"🇮🇳", city:"New Delhi",
+    searchUrl:"https://www.google.com/maps/search/petrol+pump+india",
+    note:"Prices revised daily by OMCs. Vary by state due to local taxes.",
+    brands:[
+      {name:"Indian Oil",logo:"🔵", stationCount:"34,000+", findUrl:"https://www.google.com/maps/search/indian+oil+petrol+pump"},
+      {name:"BPCL",      logo:"🔴", stationCount:"19,000+", findUrl:"https://www.google.com/maps/search/bpcl+petrol+pump+india"},
+      {name:"HPCL",      logo:"🟢", stationCount:"20,000+", findUrl:"https://www.google.com/maps/search/hpcl+petrol+pump+india"},
+    ]},
+  { id:"vn", name:"Vietnam", flag:"🇻🇳", city:"Hanoi",
+    searchUrl:"https://www.google.com/maps/search/cây+xăng+vietnam",
+    note:"Government sets maximum retail prices, updated every 10 days.",
+    brands:[
+      {name:"Petrolimex",logo:"🔴", stationCount:"5,000+", findUrl:"https://www.google.com/maps/search/petrolimex+vietnam"},
+      {name:"PV Oil",    logo:"🟦", stationCount:"500+",  findUrl:"https://www.google.com/maps/search/pv+oil+vietnam"},
+    ]},
 ];
 
-let gmap = null;
-let mapInitialized = false;
-let currentMapCountry = MAP_COUNTRIES[0];
-let stationMarkers = [];
-let placesService = null;
-let infoWindow = null;
+let currentMapCountryId = 'sg';
 
-function initMap() {
-  if (mapInitialized) return;
-  mapInitialized = true;
-
-  const mapEl = document.getElementById('gmap');
-  gmap = new google.maps.Map(mapEl, {
-    center: { lat: currentMapCountry.lat, lng: currentMapCountry.lng },
-    zoom: currentMapCountry.zoom,
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: true,
-    styles: [
-      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
-      { featureType: "transit", stylers: [{ visibility: "simplified" }] }
-    ]
-  });
-
-  placesService = new google.maps.places.PlacesService(gmap);
-  infoWindow = new google.maps.InfoWindow();
-
-  // Build country selector buttons
+function renderMap() {
+  // Build country buttons
   const controls = document.getElementById('map-country-controls');
-  let btnHtml = '<span style="font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px;">Jump to:</span>';
+  let btnHtml = '<span style="font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px">Country:</span>';
   MAP_COUNTRIES.forEach(c => {
-    const active = c.id === currentMapCountry.id ? 'active' : '';
-    btnHtml += `<button class="map-country-btn ${active}" onclick="jumpToCountry('${c.id}')">${c.flag} ${c.name}</button>`;
+    btnHtml += `<button class="map-country-btn ${c.id===currentMapCountryId?'active':''}" onclick="selectMapCountry('${c.id}')">${c.flag} ${c.name}</button>`;
   });
   controls.innerHTML = btnHtml;
-
-  // Load stations for default country
-  loadPetrolStations(currentMapCountry);
+  renderMapDetail(currentMapCountryId);
 }
 
-function jumpToCountry(id) {
+function selectMapCountry(id) {
+  currentMapCountryId = id;
+  document.querySelectorAll('.map-country-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderMapDetail(id);
+}
+
+function renderMapDetail(id) {
   const c = MAP_COUNTRIES.find(x => x.id === id);
-  if (!c || !gmap) return;
-  currentMapCountry = c;
+  const countryData = COUNTRIES.find(x => x.id === id);
+  if (!c) return;
 
-  // Update active button
-  document.querySelectorAll('.map-country-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.includes(c.name));
-  });
+  // Price summary cards
+  let priceCards = '';
+  if (countryData) {
+    GRADES.forEach(g => {
+      const p = getBest(countryData, g);
+      const cp = convertPrice(p, id);
+      const u = currentCurrency === 'local' ? cur(countryData) : getSymbol();
+      if (cp !== null) {
+        priceCards += `<div class="map-detail-card">
+          <div class="map-detail-label">${GLABELS[g]}</div>
+          <div class="map-detail-val">${fmt(cp)} <span style="font-size:.65rem;color:var(--muted);font-weight:400">${u}/L</span></div>
+          <div class="map-detail-sub">Best available price</div>
+        </div>`;
+      }
+    });
+  }
 
-  gmap.setCenter({ lat: c.lat, lng: c.lng });
-  gmap.setZoom(c.zoom);
-  clearStationMarkers();
-  loadPetrolStations(c);
-}
-
-function clearStationMarkers() {
-  stationMarkers.forEach(m => m.setMap(null));
-  stationMarkers = [];
-  if (infoWindow) infoWindow.close();
-}
-
-function loadPetrolStations(country) {
-  if (!placesService) return;
-
-  const request = {
-    location: new google.maps.LatLng(country.lat, country.lng),
-    radius: 8000,
-    type: 'gas_station'
-  };
-
-  placesService.nearbySearch(request, (results, status) => {
-    if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-      results.forEach(place => addStationMarker(place, country));
-    }
-  });
-}
-
-function addStationMarker(place, country) {
-  if (!place.geometry || !place.geometry.location) return;
-
-  const marker = new google.maps.Marker({
-    map: gmap,
-    position: place.geometry.location,
-    title: place.name,
-    icon: {
-      path: google.maps.SymbolPath.CIRCLE,
-      scale: 8,
-      fillColor: '#E84B1A',
-      fillOpacity: 0.9,
-      strokeColor: '#fff',
-      strokeWeight: 2,
-    }
-  });
-
-  marker.addListener('click', () => {
-    // Get price info for this country
-    const countryData = COUNTRIES.find(c => c.id === country.id);
-    let priceHTML = '';
-    if (countryData) {
-      const grades = ['ron95','ron98','diesel'];
-      grades.forEach(g => {
-        const p = getBest(countryData, g);
-        const cp = convertPrice(p, country.id);
-        if (cp !== null) {
-          const unit = currentCurrency === 'local' ? countryData.unit.split('/')[0] : getDisplayCurrencySymbol();
-          priceHTML += `<div style="display:flex;justify-content:space-between;gap:16px;margin-top:3px;">
-            <span style="color:#888;font-size:12px">${GLABELS[g]}</span>
-            <span style="font-weight:700;font-size:12px;font-family:monospace">${fmt(cp)} ${unit}</span>
-          </div>`;
+  // Brand rows
+  let brandRows = '';
+  c.brands.forEach(b => {
+    const brandData = countryData ? countryData.brands.find(x => x.name === b.name) : null;
+    let pricePills = '';
+    if (brandData) {
+      GRADES.forEach(g => {
+        const p = convertPrice(brandData[g], id);
+        const u = currentCurrency === 'local' ? cur(countryData) : getSymbol();
+        const colors = {ron92:'#FEF3C7|#92400E', ron95:'#D1FAE5|#064E3B', ron98:'#DBEAFE|#1E3A8A', diesel:'#EDE9FE|#4C1D95'};
+        if (p !== null) {
+          const [bg, col] = colors[g].split('|');
+          pricePills += `<span class="map-price-pill" style="background:${bg};color:${col}">${GLABELS[g]} ${fmt(p)}</span>`;
         }
       });
     }
-
-    const rating = place.rating ? `<span style="color:#F59E0B">★</span> ${place.rating} · ` : '';
-    const open = place.opening_hours ? (place.opening_hours.open_now ? '<span style="color:#059669;font-size:11px">● Open now</span>' : '<span style="color:#E84B1A;font-size:11px">● Closed</span>') : '';
-
-    infoWindow.setContent(`
-      <div style="font-family:'Outfit',sans-serif;padding:4px;min-width:180px;max-width:240px">
-        <div style="font-weight:800;font-size:14px;margin-bottom:4px">${place.name}</div>
-        <div style="font-size:11px;color:#888;margin-bottom:6px">${rating}${open}</div>
-        ${place.vicinity ? `<div style="font-size:11px;color:#555;margin-bottom:8px">📍 ${place.vicinity}</div>` : ''}
-        ${priceHTML ? `<div style="border-top:1px solid #eee;padding-top:6px;margin-top:4px"><div style="font-size:10px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Ref. Pump Prices</div>${priceHTML}</div>` : ''}
+    brandRows += `<div class="map-station-item">
+      <div class="map-station-name">
+        <span style="font-size:1.1rem">${b.logo}</span>
+        <div>
+          <div>${b.name}</div>
+          <div style="font-size:.62rem;color:var(--muted);font-weight:400">${b.stationCount} stations nationwide</div>
+        </div>
       </div>
-    `);
-    infoWindow.open(gmap, marker);
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;justify-content:flex-end">
+        <div class="map-station-prices">${pricePills}</div>
+        <a href="${b.findUrl}" target="_blank" rel="noopener"
+          style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:var(--red);color:#fff;border-radius:7px;font-size:.68rem;font-weight:700;text-decoration:none;white-space:nowrap;font-family:var(--font)">
+          📍 Find Stations
+        </a>
+      </div>
+    </div>`;
   });
 
-  stationMarkers.push(marker);
-}
-
-// Called when map tab is clicked — lazy-init the map
-function renderMap() {
-  if (typeof google === 'undefined') {
-    // Google Maps not loaded yet — check if API key is set
-    const script = document.querySelector('script[src*="maps.googleapis.com"]');
-    if (!script || script.src.includes('AIzaSyCa-BI8rorkX6LZRowZzQ3A7MT2pFweBiI')) {
-      document.getElementById('api-notice').style.display = 'block';
-      document.getElementById('gmap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#7A7570;font-size:.82rem;flex-direction:column;gap:.5rem;background:#F7F6F2"><span style="font-size:2rem">🗺️</span>Add your Google Maps API key to enable the station locator</div>';
-    }
-    return;
-  }
-  document.getElementById('api-notice').style.display = 'none';
-  setTimeout(initMap, 100);
+  document.getElementById('map-country-detail').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem">
+      <div>
+        <div style="font-size:1.5rem;display:inline">${c.flag}</div>
+        <span style="font-weight:800;font-size:1.05rem;margin-left:8px">${c.name}</span>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:3px">${c.note}</div>
+      </div>
+      <a href="${c.searchUrl}" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1.5px solid var(--red);color:var(--red);border-radius:8px;font-size:.75rem;font-weight:700;text-decoration:none;font-family:var(--font)">
+        🗺️ View All on Google Maps
+      </a>
+    </div>
+    <div class="map-detail-grid">${priceCards}</div>
+    <div style="margin-top:1.5rem">
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">Station Brands</div>
+      <div class="map-station-list">${brandRows}</div>
+    </div>`;
 }
 
 // ─── TRENDS ───────────────────────────────────────────────────────────────
@@ -755,6 +751,7 @@ function getDisplayCurrencySymbol() {
   if (currentCurrency === 'sgd') return 'SGD';
   return '';
 }
+function getSymbol() { return getDisplayCurrencySymbol(); }
 
 function setCurrency(mode) {
   currentCurrency = mode;
@@ -778,51 +775,14 @@ function init() {
   renderMap();
   renderTrendsFilter();
   renderTrendsContent();
-  document.getElementById("info-note").style.display = "block";
+  // info note hidden by default
   const badge = document.getElementById("status-badge");
   badge.className = "live-badge";
   badge.innerHTML = '<div class="live-dot"></div>Live';
 }
 
-// init() is now called by loadPrices() after fetching live data
-
-// ─── LOAD LIVE PRICES ─────────────────────────────────────────────────────
-async function loadPrices() {
-  const badge = document.getElementById('status-badge');
-  badge.className = 'live-badge loading-badge';
-  badge.innerHTML = '⟳ Loading live prices...';
-  try {
-    const res = await fetch('prices.json?t=' + Date.now());
-    if (!res.ok) throw new Error('prices.json not found');
-    const data = await res.json();
-    if (data.countries) {
-      COUNTRIES.forEach(country => {
-        const live = data.countries[country.id];
-        if (!live || Object.keys(live).length === 0) return;
-        country.brands.forEach(brand => {
-          const lp = live[brand.name];
-          if (!lp) return;
-          if (lp.ron92 !== undefined) brand.ron92 = lp.ron92;
-          if (lp.ron95 !== undefined) brand.ron95 = lp.ron95;
-          if (lp.ron98 !== undefined) brand.ron98 = lp.ron98;
-          if (lp.diesel !== undefined) brand.diesel = lp.diesel;
-        });
-      });
-    }
-    if (data.updated_sgt) {
-      document.getElementById('clock').innerHTML = 'Auto-updated daily<br><strong>' + data.updated_sgt + '</strong>';
-    }
-    badge.className = 'live-badge';
-    badge.innerHTML = '<div class="live-dot"></div>Live · Auto-updated Daily';
-    document.getElementById('info-note').style.display = 'none';
-  } catch(e) {
-    console.warn('Could not load prices.json, using fallback data.', e);
-    badge.className = 'live-badge';
-    badge.innerHTML = '<div class="live-dot" style="background:#F59E0B"></div>Reference Prices';
-  }
-  init();
-}
-loadPrices();
+// Direct init — no external fetch needed
+init();
 </script>
 
 <!-- FOOTER -->
