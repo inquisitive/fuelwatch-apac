@@ -9,15 +9,12 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#F7F6F2;--surface:#fff;--border:#E5E1D9;--border2:#CCC8BF;
-  --text:#1A1A1A;--muted:#7A7570;--muted2:#B0ABA4;
-  --red:#E84B1A;--red-bg:#FFF2EE;--green:#059669;
+  --text:#1A1A1A;--muted:#7A7570;--red:#E84B1A;--red-bg:#FFF2EE;--green:#059669;
   --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
   --shadow-lg:0 2px 8px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.06);
   --font:'Outfit',sans-serif;--mono:'DM Mono',monospace;--r:10px;
 }
 body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;min-height:100vh;}
-
-/* TOPBAR */
 .topbar{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.05);}
 .topbar-inner{max-width:1200px;margin:0 auto;padding:0 1.25rem;display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px;}
 .brand{display:flex;align-items:center;gap:10px;}
@@ -27,188 +24,141 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font
 .live-badge{display:flex;align-items:center;gap:5px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:999px;padding:3px 10px;font-size:.62rem;font-weight:600;color:#059669;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);}
 .live-dot{width:5px;height:5px;background:#10B981;border-radius:50%;animation:blink 2s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
-.loading-badge{background:#FFF7ED;border-color:#FED7AA;color:#C2410C;}
+.currency-toggle{display:flex;align-items:center;border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;flex-shrink:0;}
+.cbtn{padding:5px 12px;font-size:.72rem;font-weight:700;cursor:pointer;border:none;background:#fff;color:var(--muted);font-family:var(--mono);transition:all .15s;}
+.cbtn:hover{background:var(--bg);}
+.cbtn.active{background:var(--red);color:#fff;}
+.cdiv{width:1px;background:var(--border2);align-self:stretch;}
 .timestamp{text-align:right;font-size:.62rem;color:var(--muted);font-family:var(--mono);line-height:1.5;}
-
-/* NAV */
 .nav{background:#fff;border-bottom:1px solid var(--border);}
-.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.25rem;display:flex;overflow-x:auto;gap:0;}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.25rem;display:flex;overflow-x:auto;}
 .nav-tab{padding:.65rem 1.1rem;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font);}
 .nav-tab:hover{color:var(--text);}
 .nav-tab.active{color:var(--red);border-bottom-color:var(--red);}
-
-/* MAIN */
-.main{max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;}
+.main{max-width:1200px;margin:0 auto;padding:1.25rem;}
 .view{display:none;}.view.active{display:block;}
-
-/* FILTER BAR */
+.updated-bar{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--r);padding:.65rem 1rem;margin-bottom:1rem;font-size:.72rem;color:#065F46;font-weight:600;display:flex;align-items:center;gap:6px;}
 .filter-bar{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem;}
 .filter-label{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px;}
 .chip{padding:4px 12px;border-radius:999px;font-size:.7rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap;font-family:var(--font);}
 .chip:hover{border-color:var(--red);color:var(--red);}
 .chip.active{background:var(--red);border-color:var(--red);color:#fff;}
-
-/* INFO NOTE */
-.info-note{background:var(--red-bg);border:1px solid #FECBB4;border-radius:var(--r);padding:.75rem 1rem;font-size:.72rem;color:#9A3412;margin-bottom:1.25rem;}
-
-/* OVERVIEW GRID */
-.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem;}
+.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.9rem;}
 .country-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow);cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
 .country-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .2s;}
 .country-card:hover{border-color:var(--red);box-shadow:var(--shadow-lg);transform:translateY(-1px);}
 .country-card:hover::after{transform:scaleX(1);}
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;}
-.card-flag{font-size:1.4rem;}
-.card-name{font-weight:700;font-size:.88rem;}
-.card-unit{font-size:.6rem;color:var(--muted);font-family:var(--mono);margin-top:1px;}
+.card-name{font-weight:700;font-size:.88rem;}.card-unit{font-size:.6rem;color:var(--muted);font-family:var(--mono);}
 .card-count{font-size:.62rem;color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:999px;white-space:nowrap;}
 .fuel-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
 .ftag{font-size:.62rem;font-weight:600;font-family:var(--mono);padding:2px 8px;border-radius:4px;}
-.ftag.ron92{background:#FEF3C7;color:#92400E;}
-.ftag.ron95{background:#D1FAE5;color:#064E3B;}
-.ftag.ron98{background:#DBEAFE;color:#1E3A8A;}
+.ftag.ron92{background:#FEF3C7;color:#92400E;}.ftag.ron95{background:#D1FAE5;color:#064E3B;}
+.ftag.ron97{background:#FCE7F3;color:#9D174D;}.ftag.ron98{background:#DBEAFE;color:#1E3A8A;}
 .ftag.diesel{background:#EDE9FE;color:#4C1D95;}
 .fprice{font-weight:700;font-size:.84rem;font-family:var(--mono);}
 .fprice-unit{font-size:.58rem;color:var(--muted);}
-
-/* BRAND TABLES */
 .section-title{font-weight:800;font-size:1.05rem;margin-bottom:4px;}
 .section-sub{font-size:.74rem;color:var(--muted);margin-bottom:1.1rem;}
 .btable-wrap{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:1.1rem;}
 .btable-head{padding:.85rem 1.1rem;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-.btable-flag{font-size:1.2rem;}
 .btable-cname{font-weight:700;font-size:.9rem;}
 .btable-unit{font-size:.6rem;color:var(--muted);font-family:var(--mono);background:var(--border);padding:2px 8px;border-radius:4px;margin-left:auto;}
 table{width:100%;border-collapse:collapse;}
 th{padding:.55rem .95rem;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left;border-bottom:1px solid var(--border);background:var(--bg);}
-th.right{text-align:right;}
+th.r{text-align:right;}
 td{padding:.65rem .95rem;font-size:.82rem;border-bottom:1px solid var(--border);vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:var(--red-bg);}
+tr:last-child td{border-bottom:none;}tr:hover td{background:var(--red-bg);}
 .td-brand{display:flex;align-items:center;gap:7px;font-weight:600;}
 .td-price{font-family:var(--mono);font-weight:600;text-align:right;}
 .td-na{color:#CCC;font-size:.68rem;text-align:right;}
 .best{color:var(--green);}
 .best-tag{font-size:.52rem;background:#D1FAE5;color:var(--green);padding:1px 5px;border-radius:3px;margin-left:3px;font-weight:700;vertical-align:middle;}
-
-/* GRADE VIEW */
 .grade-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem;}
-@media(max-width:640px){.grade-grid{grid-template-columns:1fr;}.country-grid{grid-template-columns:1fr;}}
+@media(max-width:640px){.grade-grid,.country-grid{grid-template-columns:1fr;}}
 .grade-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
 .grade-card-head{padding:.9rem 1.1rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--bg);}
-.gpill{padding:3px 14px;border-radius:999px;font-size:.72rem;font-weight:700;font-family:var(--mono);}
-.gpill.ron92{background:#FEF3C7;color:#92400E;}
-.gpill.ron95{background:#D1FAE5;color:#064E3B;}
-.gpill.ron98{background:#DBEAFE;color:#1E3A8A;}
-.gpill.diesel{background:#EDE9FE;color:#4C1D95;}
 .grade-markets{font-size:.68rem;color:var(--muted);margin-left:auto;}
 .grade-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.1rem;border-bottom:1px solid var(--border);}
 .grade-row:last-child{border-bottom:none;}
 .gr-country{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:500;}
 .gr-price{font-family:var(--mono);font-size:.84rem;font-weight:700;}
 .gr-unit{font-size:.58rem;color:var(--muted);font-family:var(--mono);margin-left:3px;}
-
-/* MAP */
 .map-wrap{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);}
 .map-header{padding:.9rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
-.map-title{font-weight:700;font-size:.9rem;}
-.map-sub{font-size:.68rem;color:var(--muted);margin-top:1px;}
+.map-title{font-weight:700;font-size:.9rem;}.map-sub{font-size:.68rem;color:var(--muted);margin-top:1px;}
 .map-controls{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;padding:.85rem 1.1rem;border-bottom:1px solid var(--border);background:var(--bg);}
-.map-country-btn{padding:5px 12px;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap;font-family:var(--font);}
-.map-country-btn:hover{border-color:var(--red);color:var(--red);}
-.map-country-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
-.map-legend{padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:1rem;flex-wrap:wrap;align-items:center;}
-
-.leg-item{display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--muted);}
-.leg-dot{width:7px;height:7px;border-radius:50%;}
-
-/* TRENDS */
-.trends-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.9rem;}
+.mcbtn{padding:5px 12px;border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap;font-family:var(--font);}
+.mcbtn:hover{border-color:var(--red);color:var(--red);}
+.mcbtn.active{background:var(--red);border-color:var(--red);color:#fff;}
+.map-detail{padding:1.25rem;}
+.price-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.75rem;margin-bottom:1.25rem;}
+.price-card{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:.85rem 1rem;}
+.pc-label{font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.pc-val{font-size:.95rem;font-weight:700;font-family:var(--mono);}
+.pc-sub{font-size:.6rem;color:var(--muted);margin-top:2px;}
+.station-list{margin-top:.25rem;}
+.station-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--border);}
+.station-row:last-child{border-bottom:none;}
+.stn-name{display:flex;align-items:center;gap:8px;}
+.stn-title{font-weight:600;font-size:.84rem;}
+.stn-count{font-size:.62rem;color:var(--muted);}
+.find-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;background:var(--red);color:#fff;border-radius:7px;font-size:.68rem;font-weight:700;text-decoration:none;white-space:nowrap;}
+.view-all-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border:1.5px solid var(--red);color:var(--red);border-radius:8px;font-size:.75rem;font-weight:700;text-decoration:none;}
+.trends-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.9rem;}
 .trend-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow);}
 .trend-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
 .trend-country{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.86rem;}
 .trend-chg{font-size:.7rem;font-family:var(--mono);font-weight:700;}
-.chg-up{color:var(--red);}
-.chg-dn{color:var(--green);}
+.chg-up{color:var(--red);}.chg-dn{color:var(--green);}
 .trend-meta{font-size:.62rem;color:var(--muted);margin-bottom:.8rem;font-family:var(--mono);}
-.spark{width:100%;height:70px;display:block;}
-
-/* LOADING */
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;gap:.9rem;}
-.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{font-size:.75rem;color:var(--muted);}
-
-/* CURRENCY SWITCHER */
-.currency-toggle{display:flex;align-items:center;gap:0;border:1.5px solid var(--border2);border-radius:8px;overflow:hidden;flex-shrink:0;}
-.currency-btn{padding:5px 12px;font-size:.72rem;font-weight:700;cursor:pointer;border:none;background:#fff;color:var(--muted);font-family:var(--mono);transition:all .15s;letter-spacing:.04em;}
-.currency-btn:hover{background:var(--bg);}
-.currency-btn.active{background:var(--red);color:#fff;}
-.currency-divider{width:1px;height:100%;background:var(--border2);}
-
-/* FOOTER */
 .site-footer{background:#fff;border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 1.25rem;}
 .site-footer-inner{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:.75rem;}
 .footer-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
-.footer-disclaimer{font-size:.68rem;color:var(--muted);line-height:1.6;max-width:680px;}
-.footer-disclaimer strong{color:#555;}
-.footer-brand{font-size:.72rem;color:var(--muted);}
-.footer-brand a{color:var(--red);text-decoration:none;font-weight:600;}
-.footer-brand a:hover{text-decoration:underline;}
-.footer-divider{height:1px;background:var(--border);width:100%;}
+.footer-disc{font-size:.68rem;color:var(--muted);line-height:1.6;max-width:680px;}
+.footer-disc strong{color:#555;}
+.footer-link{font-size:.72rem;color:var(--muted);}
+.footer-link a{color:var(--red);text-decoration:none;font-weight:600;}
+.footer-divider{height:1px;background:var(--border);}
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand">
       <div class="brand-icon">⛽</div>
-      <div>
-        <div class="brand-name">FuelWatch APAC</div>
-        <div class="brand-sub">Petrol Prices · Asia-Pacific</div>
-      </div>
+      <div><div class="brand-name">FuelWatch APAC</div><div class="brand-sub">Petrol Prices · Asia-Pacific</div></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
       <div class="currency-toggle">
-        <button class="currency-btn active" id="btn-local" onclick="setCurrency('local')">Local</button>
-        <div class="currency-divider"></div>
-        <button class="currency-btn" id="btn-usd" onclick="setCurrency('usd')">USD</button>
-        <div class="currency-divider"></div>
-        <button class="currency-btn" id="btn-sgd" onclick="setCurrency('sgd')">SGD</button>
+        <button class="cbtn active" id="btn-local" onclick="setCurrency('local')">Local</button>
+        <div class="cdiv"></div>
+        <button class="cbtn" id="btn-usd" onclick="setCurrency('usd')">USD</button>
+        <div class="cdiv"></div>
+        <button class="cbtn" id="btn-sgd" onclick="setCurrency('sgd')">SGD</button>
       </div>
       <div class="timestamp" id="clock"></div>
-      <div class="live-badge loading-badge" id="status-badge">⟳ Loading...</div>
+      <div class="live-badge"><div class="live-dot"></div>Live</div>
     </div>
   </div>
 </div>
 
-<!-- NAV -->
 <div class="nav">
   <div class="nav-inner">
     <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
     <button class="nav-tab" onclick="showTab('brands')">By Brand</button>
     <button class="nav-tab" onclick="showTab('grades')">By Grade</button>
-    <button class="nav-tab" onclick="showTab('map')">Map</button>
+    <button class="nav-tab" onclick="showTab('map')">Stations</button>
     <button class="nav-tab" onclick="showTab('trends')">Trends</button>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
+  <div class="updated-bar">✅ Prices last updated: <span id="last-updated" style="font-family:var(--mono)">28 Mar 2026</span></div>
 
-  <!-- INFO NOTE (hidden initially) -->
-  <div class="info-note" id="info-note" style="display:none">
-    ⛽ <strong>Prices shown</strong> are reference indicatives. Brand differentials are approximate estimates based on national benchmarks.
-  </div>
+  <div class="view active" id="view-overview"></div>
 
-  <!-- OVERVIEW -->
-  <div class="view active" id="view-overview">
-    <div class="loading"><div class="spinner"></div><div class="loading-text">Loading prices…</div></div>
-  </div>
-
-  <!-- BRANDS -->
   <div class="view" id="view-brands">
     <div class="filter-bar" id="brands-filter"></div>
     <div class="section-title">Prices by Brand</div>
@@ -216,592 +166,347 @@ tr:hover td{background:var(--red-bg);}
     <div id="brands-content"></div>
   </div>
 
-  <!-- GRADES -->
   <div class="view" id="view-grades">
     <div class="section-title">Prices by Fuel Grade</div>
     <div class="section-sub">Cheapest available price per country. Local currency per litre.</div>
     <div class="grade-grid" id="grades-content"></div>
   </div>
 
-  <!-- MAP -->
   <div class="view" id="view-map">
     <div class="map-wrap">
       <div class="map-header">
-        <div>
-          <div class="map-title">⛽ Petrol Stations by Country</div>
-          <div class="map-sub">Select a country to see brands, prices and station finder links</div>
-        </div>
+        <div><div class="map-title">Petrol Stations by Country</div><div class="map-sub">Select a country to see brands, prices and links to find nearby stations</div></div>
         <div class="live-badge"><div class="live-dot"></div>Reference Data</div>
       </div>
-      <div class="map-controls" id="map-country-controls"></div>
-      <div id="map-country-detail" style="padding:1.25rem"></div>
+      <div class="map-controls" id="map-controls"></div>
+      <div class="map-detail" id="map-detail"></div>
     </div>
   </div>
 
-    <!-- TRENDS -->
   <div class="view" id="view-trends">
     <div class="filter-bar" id="trends-filter"></div>
     <div class="section-title">12-Month Price Trends</div>
     <div class="section-sub">RON 95 / equivalent pump price · Mar 2025 – Feb 2026 · Local currency per litre</div>
     <div class="trends-grid" id="trends-content"></div>
   </div>
-
 </div>
 
-<script>
-// ─── DATA ───────────────────────────────────────────────────────────────
-const COUNTRIES = [
-  { id:"sg", name:"Singapore", flag:"🇸🇬", unit:"SGD/L", cx:400, cy:305,
-    brands:[
-      {name:"Esso",    logo:"🟡", ron92:3.43, ron95:3.47, ron98:3.97, diesel:3.73},
-      {name:"Shell",   logo:"🔴", ron92:null,  ron95:3.47, ron98:3.99, diesel:3.73},
-      {name:"SPC",     logo:"⚪", ron92:3.43, ron95:3.46, ron98:3.97, diesel:3.56},
-      {name:"Caltex",  logo:"🔵", ron92:3.43, ron95:3.47, ron98:null,  diesel:3.73},
-      {name:"Sinopec", logo:"🟠", ron92:null,  ron95:3.47, ron98:3.97, diesel:3.72},
-    ],
-    trend:[2.85,2.95,3.05,3.15,3.25,3.35,3.40,3.43,3.45,3.47,3.47,3.47] },
-  { id:"my", name:"Malaysia", flag:"🇲🇾", unit:"MYR/L", cx:380, cy:295,
-    brands:[
-      {name:"Petronas",logo:"🟢", ron92:null, ron95:3.27, ron98:4.55, diesel:4.72},
-      {name:"Shell",   logo:"🔴", ron92:null, ron95:3.27, ron98:4.55, diesel:4.72},
-      {name:"Caltex",  logo:"🔵", ron92:null, ron95:3.27, ron98:4.55, diesel:4.72},
-      {name:"BHPetrol",logo:"⚫", ron92:null, ron95:3.27, ron98:4.55, diesel:4.72},
-    ],
-    trend:[2.05,2.05,2.70,2.90,3.10,3.15,3.20,3.25,3.27,3.27,3.27,3.27] },
-  { id:"th", name:"Thailand", flag:"🇹🇭", unit:"THB/L", cx:368, cy:265,
-    brands:[
-      {name:"PTT",     logo:"🟦", ron92:35.96, ron95:40.50, ron98:null, diesel:28.79},
-      {name:"Shell",   logo:"🔴", ron92:36.08, ron95:40.75, ron98:null, diesel:28.89},
-      {name:"Bangchak",logo:"🟩", ron92:35.88, ron95:40.40, ron98:null, diesel:28.70},
-    ],
-    trend:[36.5,37.2,38.0,39.1,40.0,40.5,40.8,40.5,40.2,40.5,40.8,40.5] },
-  { id:"ph", name:"Philippines", flag:"🇵🇭", unit:"PHP/L", cx:440, cy:262,
-    brands:[
-      {name:"Shell",  logo:"🔴", ron92:56.20, ron95:60.80, ron98:65.40, diesel:55.30},
-      {name:"Caltex", logo:"🔵", ron92:55.90, ron95:60.50, ron98:65.10, diesel:55.00},
-      {name:"Petron", logo:"🟣", ron92:55.60, ron95:60.20, ron98:64.80, diesel:54.70},
-    ],
-    trend:[53.2,54.5,56.8,58.2,60.1,60.8,61.2,60.5,59.8,60.8,61.5,60.8] },
-  { id:"id", name:"Indonesia", flag:"🇮🇩", unit:"IDR/L", cx:412, cy:318,
-    brands:[
-      {name:"Pertamina",logo:"🔵", ron92:10000, ron95:13500, ron98:15900, diesel:6800},
-      {name:"Shell",    logo:"🔴", ron92:null,  ron95:13990, ron98:16290, diesel:14640},
-      {name:"Vivo",     logo:"🟡", ron92:10000, ron95:13500, ron98:null,  diesel:13590},
-    ],
-    trend:[9500,9500,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000] },
-  { id:"au", name:"Australia", flag:"🇦🇺", unit:"AUD/L", cx:466, cy:380,
-    brands:[
-      {name:"Shell",  logo:"🔴", ron92:null, ron95:2.10, ron98:2.35, diesel:2.18},
-      {name:"BP",     logo:"🟢", ron92:null, ron95:2.12, ron98:2.38, diesel:2.20},
-      {name:"Ampol",  logo:"🟠", ron92:null, ron95:2.05, ron98:2.29, diesel:2.12},
-      {name:"Caltex", logo:"🔵", ron92:null, ron95:2.08, ron98:2.32, diesel:2.15},
-    ],
-    trend:[1.75,1.82,1.90,1.98,2.05,2.10,2.18,2.14,2.08,2.10,2.15,2.10] },
-  { id:"jp", name:"Japan", flag:"🇯🇵", unit:"JPY/L", cx:482, cy:210,
-    brands:[
-      {name:"ENEOS",    logo:"🔵", ron92:null, ron95:175, ron98:186, diesel:154},
-      {name:"Idemitsu", logo:"🔴", ron92:null, ron95:174, ron98:185, diesel:153},
-      {name:"Cosmo Oil",logo:"🟠", ron92:null, ron95:173, ron98:184, diesel:152},
-    ],
-    trend:[158,162,165,168,172,175,178,176,173,175,177,175] },
-  { id:"kr", name:"S. Korea", flag:"🇰🇷", unit:"KRW/L", cx:468, cy:218,
-    brands:[
-      {name:"SK Energy",      logo:"🔴", ron92:1610, ron95:1670, ron98:null, diesel:1520},
-      {name:"GS Caltex",      logo:"🟦", ron92:1605, ron95:1665, ron98:null, diesel:1515},
-      {name:"Hyundai Oilbank",logo:"⚫", ron92:1595, ron95:1655, ron98:null, diesel:1505},
-    ],
-    trend:[1520,1548,1572,1598,1625,1670,1692,1680,1668,1670,1678,1670] },
-  { id:"cn", name:"China", flag:"🇨🇳", unit:"CNY/L", cx:430, cy:228,
-    brands:[
-      {name:"Sinopec",    logo:"🔴", ron92:7.28, ron95:7.68, ron98:8.22, diesel:7.38},
-      {name:"PetroChina", logo:"🔵", ron92:7.28, ron95:7.68, ron98:8.22, diesel:7.38},
-    ],
-    trend:[6.92,7.05,7.18,7.38,7.55,7.68,7.72,7.68,7.62,7.68,7.74,7.68] },
-  { id:"in", name:"India", flag:"🇮🇳", unit:"INR/L", cx:346, cy:258,
-    brands:[
-      {name:"Indian Oil",logo:"🔵", ron92:null, ron95:102.92, ron98:111.30, diesel:89.62},
-      {name:"BPCL",      logo:"🔴", ron92:null, ron95:102.78, ron98:111.10, diesel:89.45},
-      {name:"HPCL",      logo:"🟢", ron92:null, ron95:102.85, ron98:111.20, diesel:89.55},
-    ],
-    trend:[96.8,98.2,100.1,101.5,102.4,102.9,103.2,102.9,102.5,102.9,103.2,102.9] },
-];
-
-const GRADES = ["ron92","ron95","ron98","diesel"];
-const GLABELS = {ron92:"RON 92",ron95:"RON 95",ron98:"RON 98",diesel:"Diesel"};
-const MONTHS = ["Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb"];
-let currentBrandsFilter = "all";
-let currentTrendsFilter = "all";
-
-// ─── HELPERS ─────────────────────────────────────────────────────────────
-function getBest(c, g) {
-  const v = c.brands.map(b=>b[g]).filter(x=>x!=null);
-  return v.length ? Math.min(...v) : null;
-}
-function getBestBrand(c, g) {
-  let b=null, n=null;
-  c.brands.forEach(x=>{if(x[g]!=null&&(b===null||x[g]<b)){b=x[g];n=x.name;}});
-  return n;
-}
-function fmt(p) {
-  if(p==null) return null;
-  if(p>=10000) return p.toLocaleString();
-  if(p>=1000) return p.toLocaleString();
-  if(p>=100) return p.toFixed(0);
-  return p.toFixed(2);
-}
-function cur(c) { return c.unit.split("/")[0]; }
-
-// ─── CLOCK ───────────────────────────────────────────────────────────────
-function updateClock() {
-  const now = new Date();
-  const d = now.toLocaleDateString("en-SG",{weekday:"short",day:"numeric",month:"short"});
-  const t = now.toLocaleTimeString("en-SG",{hour:"2-digit",minute:"2-digit"});
-  document.getElementById("clock").innerHTML = `${d}<br>${t} SGT`;
-}
-updateClock();
-setInterval(updateClock, 30000);
-
-// ─── TAB SWITCHER ─────────────────────────────────────────────────────────
-function showTab(name) {
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
-  document.getElementById("view-"+name).classList.add("active");
-  const tabs = ["overview","brands","grades","map","trends"];
-  document.querySelectorAll(".nav-tab")[tabs.indexOf(name)].classList.add("active");
-  if (name === 'map') setTimeout(renderMap, 50);
-}
-
-// ─── OVERVIEW ─────────────────────────────────────────────────────────────
-function renderOverview() {
-  const container = document.getElementById("view-overview");
-  let html = '<div class="country-grid">';
-  COUNTRIES.forEach(c => {
-    html += `<div class="country-card" onclick="showTab('brands');filterBrands('${c.id}')">
-      <div class="card-head">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="card-flag">${c.flag}</span>
-          <div><div class="card-name">${c.name}</div><div class="card-unit">${c.unit}</div></div>
-        </div>
-        <span class="card-count">${c.brands.length} brands</span>
-      </div>`;
-    GRADES.forEach(g => {
-      const raw = getBest(c, g);
-      const p = convertPrice(raw, c.id);
-      const unit = currentCurrency === 'local' ? cur(c) : getDisplayCurrencySymbol();
-      if(p !== null) html += `<div class="fuel-row"><span class="ftag ${g}">${GLABELS[g]}</span><span class="fprice">${fmt(p)} <span class="fprice-unit">${unit}</span></span></div>`;
-    });
-    html += `</div>`;
-  });
-  html += "</div>";
-  container.innerHTML = html;
-}
-
-// ─── BRANDS ───────────────────────────────────────────────────────────────
-function renderBrandsFilter() {
-  const bar = document.getElementById("brands-filter");
-  let html = `<span class="filter-label">Country:</span>
-    <button class="chip ${currentBrandsFilter==='all'?'active':''}" onclick="filterBrands('all')">All</button>`;
-  COUNTRIES.forEach(c => {
-    html += `<button class="chip ${currentBrandsFilter===c.id?'active':''}" onclick="filterBrands('${c.id}')">${c.flag} ${c.name}</button>`;
-  });
-  bar.innerHTML = html;
-}
-function filterBrands(id) {
-  currentBrandsFilter = id;
-  renderBrandsFilter();
-  renderBrandsContent();
-}
-function renderBrandsContent() {
-  const list = currentBrandsFilter === "all" ? COUNTRIES : COUNTRIES.filter(c=>c.id===currentBrandsFilter);
-  let html = "";
-  list.forEach(c => {
-    const has92 = c.brands.some(b=>b.ron92!=null);
-    const has98 = c.brands.some(b=>b.ron98!=null);
-    const b92=getBestBrand(c,"ron92"), b95=getBestBrand(c,"ron95"), b98=getBestBrand(c,"ron98"), bds=getBestBrand(c,"diesel");
-    html += `<div class="btable-wrap">
-      <div class="btable-head">
-        <span class="btable-flag">${c.flag}</span>
-        <span class="btable-cname">${c.name}</span>
-        <span class="btable-unit">${getDisplayUnit(c)}</span>
-      </div>
-      <table><thead><tr>
-        <th>Brand</th>
-        ${has92?'<th class="right">RON 92</th>':''}
-        <th class="right">RON 95</th>
-        ${has98?'<th class="right">RON 98</th>':''}
-        <th class="right">Diesel</th>
-      </tr></thead><tbody>`;
-    c.brands.forEach(b => {
-      const cell = (val, isBest) => val!=null
-        ? `<td class="td-price ${isBest?'best':''}">${fmt(convertPrice(val, c.id))}${isBest?'<span class="best-tag">BEST</span>':''}</td>`
-        : `<td class="td-na">—</td>`;
-      html += `<tr>
-        <td><div class="td-brand"><span>${b.logo}</span>${b.name}</div></td>
-        ${has92?cell(b.ron92,b.name===b92):''}
-        ${cell(b.ron95,b.name===b95)}
-        ${has98?cell(b.ron98,b.name===b98):''}
-        ${cell(b.diesel,b.name===bds)}
-      </tr>`;
-    });
-    html += `</tbody></table></div>`;
-  });
-  document.getElementById("brands-content").innerHTML = html;
-}
-
-// ─── GRADES ───────────────────────────────────────────────────────────────
-function renderGrades() {
-  const gpills = {ron92:"#FEF3C7|#92400E",ron95:"#D1FAE5|#064E3B",ron98:"#DBEAFE|#1E3A8A",diesel:"#EDE9FE|#4C1D95"};
-  let html = "";
-  GRADES.forEach(g => {
-    const [bg,col] = gpills[g].split("|");
-    const eligible = COUNTRIES.filter(c=>getBest(c,g)!==null);
-    let rows = "";
-    eligible.forEach(c => {
-      const p = getBest(c,g);
-      rows += `<div class="grade-row">
-        <div class="gr-country"><span>${c.flag}</span>${c.name}</div>
-        <div><span class="gr-price">${fmt(convertPrice(p, c.id))}</span><span class="gr-unit">${currentCurrency === 'local' ? cur(c) : getDisplayCurrencySymbol()}/L</span></div>
-      </div>`;
-    });
-    html += `<div class="grade-card">
-      <div class="grade-card-head">
-        <span class="gpill ${g}" style="background:${bg};color:${col}">${GLABELS[g]}</span>
-        <span class="grade-markets">${eligible.length} markets</span>
-      </div>${rows}</div>`;
-  });
-  document.getElementById("grades-content").innerHTML = html;
-}
-
-// ─── MAP — Country Petrol Station Browser ────────────────────────────────
-const MAP_COUNTRIES = [
-  { id:"sg", name:"Singapore", flag:"🇸🇬", city:"Singapore City",
-    searchUrl:"https://www.google.com/maps/search/petrol+station+singapore",
-    note:"Stations island-wide. Major brands: Esso, Shell, SPC, Caltex, Sinopec.",
-    brands:[
-      {name:"Esso",    logo:"🟡", stationCount:"50+", findUrl:"https://www.google.com/maps/search/esso+petrol+station+singapore"},
-      {name:"Shell",   logo:"🔴", stationCount:"60+", findUrl:"https://www.google.com/maps/search/shell+petrol+station+singapore"},
-      {name:"SPC",     logo:"⚪", stationCount:"40+", findUrl:"https://www.google.com/maps/search/spc+petrol+station+singapore"},
-      {name:"Caltex",  logo:"🔵", stationCount:"35+", findUrl:"https://www.google.com/maps/search/caltex+petrol+station+singapore"},
-      {name:"Sinopec", logo:"🟠", stationCount:"15+", findUrl:"https://www.google.com/maps/search/sinopec+petrol+station+singapore"},
-    ]},
-  { id:"my", name:"Malaysia", flag:"🇲🇾", city:"Kuala Lumpur",
-    searchUrl:"https://www.google.com/maps/search/petrol+station+malaysia",
-    note:"Nationwide network. RON 95 Budi subsidy RM 1.99 for eligible citizens.",
-    brands:[
-      {name:"Petronas",logo:"🟢", stationCount:"1,000+", findUrl:"https://www.google.com/maps/search/petronas+petrol+station+malaysia"},
-      {name:"Shell",   logo:"🔴", stationCount:"950+",  findUrl:"https://www.google.com/maps/search/shell+petrol+station+malaysia"},
-      {name:"Caltex",  logo:"🔵", stationCount:"600+",  findUrl:"https://www.google.com/maps/search/caltex+petrol+station+malaysia"},
-      {name:"BHPetrol",logo:"⚫", stationCount:"300+",  findUrl:"https://www.google.com/maps/search/bhpetrol+station+malaysia"},
-    ]},
-  { id:"th", name:"Thailand", flag:"🇹🇭", city:"Bangkok",
-    searchUrl:"https://www.google.com/maps/search/petrol+station+thailand",
-    note:"PTT is the dominant state-owned brand. Prices adjusted weekly by government.",
-    brands:[
-      {name:"PTT",     logo:"🟦", stationCount:"1,800+", findUrl:"https://www.google.com/maps/search/ptt+petrol+station+thailand"},
-      {name:"Shell",   logo:"🔴", stationCount:"700+",  findUrl:"https://www.google.com/maps/search/shell+petrol+station+thailand"},
-      {name:"Bangchak",logo:"🟩", stationCount:"1,100+",findUrl:"https://www.google.com/maps/search/bangchak+petrol+station+thailand"},
-    ]},
-  { id:"ph", name:"Philippines", flag:"🇵🇭", city:"Manila",
-    searchUrl:"https://www.google.com/maps/search/gas+station+philippines",
-    note:"DOE adjusts prices weekly. Prices vary slightly by region.",
-    brands:[
-      {name:"Shell",  logo:"🔴", stationCount:"1,100+", findUrl:"https://www.google.com/maps/search/shell+gas+station+philippines"},
-      {name:"Caltex", logo:"🔵", stationCount:"800+",  findUrl:"https://www.google.com/maps/search/caltex+gas+station+philippines"},
-      {name:"Petron", logo:"🟣", stationCount:"2,300+", findUrl:"https://www.google.com/maps/search/petron+gas+station+philippines"},
-    ]},
-  { id:"id", name:"Indonesia", flag:"🇮🇩", city:"Jakarta",
-    searchUrl:"https://www.google.com/maps/search/spbu+pertamina+indonesia",
-    note:"Pertalite (RON 92) is subsidised. Pertamina operates the largest network.",
-    brands:[
-      {name:"Pertamina",logo:"🔵", stationCount:"7,000+", findUrl:"https://www.google.com/maps/search/spbu+pertamina+indonesia"},
-      {name:"Shell",    logo:"🔴", stationCount:"100+",  findUrl:"https://www.google.com/maps/search/shell+spbu+indonesia"},
-      {name:"Vivo",     logo:"🟡", stationCount:"50+",   findUrl:"https://www.google.com/maps/search/vivo+spbu+indonesia"},
-    ]},
-  { id:"au", name:"Australia", flag:"🇦🇺", city:"Sydney",
-    searchUrl:"https://www.google.com/maps/search/petrol+station+australia",
-    note:"Prices follow a weekly cycle. Tuesday/Wednesday typically cheapest.",
-    brands:[
-      {name:"Shell",  logo:"🔴", stationCount:"700+",  findUrl:"https://www.google.com/maps/search/shell+petrol+station+australia"},
-      {name:"BP",     logo:"🟢", stationCount:"1,400+", findUrl:"https://www.google.com/maps/search/bp+petrol+station+australia"},
-      {name:"Ampol",  logo:"🟠", stationCount:"1,900+", findUrl:"https://www.google.com/maps/search/ampol+petrol+station+australia"},
-      {name:"Caltex", logo:"🔵", stationCount:"500+",  findUrl:"https://www.google.com/maps/search/caltex+petrol+station+australia"},
-    ]},
-  { id:"jp", name:"Japan", flag:"🇯🇵", city:"Tokyo",
-    searchUrl:"https://www.google.com/maps/search/ガソリンスタンド+tokyo",
-    note:"METI publishes weekly average prices. Tax makes up ~50% of pump price.",
-    brands:[
-      {name:"ENEOS",    logo:"🔵", stationCount:"12,000+", findUrl:"https://www.google.com/maps/search/eneos+gas+station+japan"},
-      {name:"Idemitsu", logo:"🔴", stationCount:"6,000+",  findUrl:"https://www.google.com/maps/search/idemitsu+gas+station+japan"},
-      {name:"Cosmo Oil",logo:"🟠", stationCount:"3,400+",  findUrl:"https://www.google.com/maps/search/cosmo+gas+station+japan"},
-    ]},
-  { id:"kr", name:"S. Korea", flag:"🇰🇷", city:"Seoul",
-    searchUrl:"https://www.google.com/maps/search/주유소+seoul",
-    note:"OPINET tracks daily prices. Tax accounts for about 55% of retail price.",
-    brands:[
-      {name:"SK Energy",      logo:"🔴", stationCount:"4,700+", findUrl:"https://www.google.com/maps/search/sk+주유소+korea"},
-      {name:"GS Caltex",      logo:"🟦", stationCount:"4,600+", findUrl:"https://www.google.com/maps/search/gs칼텍스+주유소+korea"},
-      {name:"Hyundai Oilbank",logo:"⚫", stationCount:"2,700+", findUrl:"https://www.google.com/maps/search/hyundai+oilbank+주유소+korea"},
-    ]},
-  { id:"in", name:"India", flag:"🇮🇳", city:"New Delhi",
-    searchUrl:"https://www.google.com/maps/search/petrol+pump+india",
-    note:"Prices revised daily by OMCs. Vary by state due to local taxes.",
-    brands:[
-      {name:"Indian Oil",logo:"🔵", stationCount:"34,000+", findUrl:"https://www.google.com/maps/search/indian+oil+petrol+pump"},
-      {name:"BPCL",      logo:"🔴", stationCount:"19,000+", findUrl:"https://www.google.com/maps/search/bpcl+petrol+pump+india"},
-      {name:"HPCL",      logo:"🟢", stationCount:"20,000+", findUrl:"https://www.google.com/maps/search/hpcl+petrol+pump+india"},
-    ]},
-  { id:"vn", name:"Vietnam", flag:"🇻🇳", city:"Hanoi",
-    searchUrl:"https://www.google.com/maps/search/cây+xăng+vietnam",
-    note:"Government sets maximum retail prices, updated every 10 days.",
-    brands:[
-      {name:"Petrolimex",logo:"🔴", stationCount:"5,000+", findUrl:"https://www.google.com/maps/search/petrolimex+vietnam"},
-      {name:"PV Oil",    logo:"🟦", stationCount:"500+",  findUrl:"https://www.google.com/maps/search/pv+oil+vietnam"},
-    ]},
-];
-
-let currentMapCountryId = 'sg';
-
-function renderMap() {
-  // Build country buttons
-  const controls = document.getElementById('map-country-controls');
-  let btnHtml = '<span style="font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px">Country:</span>';
-  MAP_COUNTRIES.forEach(c => {
-    btnHtml += `<button class="map-country-btn ${c.id===currentMapCountryId?'active':''}" onclick="selectMapCountry('${c.id}')">${c.flag} ${c.name}</button>`;
-  });
-  controls.innerHTML = btnHtml;
-  renderMapDetail(currentMapCountryId);
-}
-
-function selectMapCountry(id) {
-  currentMapCountryId = id;
-  document.querySelectorAll('.map-country-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  renderMapDetail(id);
-}
-
-function renderMapDetail(id) {
-  const c = MAP_COUNTRIES.find(x => x.id === id);
-  const countryData = COUNTRIES.find(x => x.id === id);
-  if (!c) return;
-
-  // Price summary cards
-  let priceCards = '';
-  if (countryData) {
-    GRADES.forEach(g => {
-      const p = getBest(countryData, g);
-      const cp = convertPrice(p, id);
-      const u = currentCurrency === 'local' ? cur(countryData) : getSymbol();
-      if (cp !== null) {
-        priceCards += `<div class="map-detail-card">
-          <div class="map-detail-label">${GLABELS[g]}</div>
-          <div class="map-detail-val">${fmt(cp)} <span style="font-size:.65rem;color:var(--muted);font-weight:400">${u}/L</span></div>
-          <div class="map-detail-sub">Best available price</div>
-        </div>`;
-      }
-    });
-  }
-
-  // Brand rows
-  let brandRows = '';
-  c.brands.forEach(b => {
-    const brandData = countryData ? countryData.brands.find(x => x.name === b.name) : null;
-    let pricePills = '';
-    if (brandData) {
-      GRADES.forEach(g => {
-        const p = convertPrice(brandData[g], id);
-        const u = currentCurrency === 'local' ? cur(countryData) : getSymbol();
-        const colors = {ron92:'#FEF3C7|#92400E', ron95:'#D1FAE5|#064E3B', ron98:'#DBEAFE|#1E3A8A', diesel:'#EDE9FE|#4C1D95'};
-        if (p !== null) {
-          const [bg, col] = colors[g].split('|');
-          pricePills += `<span class="map-price-pill" style="background:${bg};color:${col}">${GLABELS[g]} ${fmt(p)}</span>`;
-        }
-      });
-    }
-    brandRows += `<div class="map-station-item">
-      <div class="map-station-name">
-        <span style="font-size:1.1rem">${b.logo}</span>
-        <div>
-          <div>${b.name}</div>
-          <div style="font-size:.62rem;color:var(--muted);font-weight:400">${b.stationCount} stations nationwide</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;justify-content:flex-end">
-        <div class="map-station-prices">${pricePills}</div>
-        <a href="${b.findUrl}" target="_blank" rel="noopener"
-          style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:var(--red);color:#fff;border-radius:7px;font-size:.68rem;font-weight:700;text-decoration:none;white-space:nowrap;font-family:var(--font)">
-          📍 Find Stations
-        </a>
-      </div>
-    </div>`;
-  });
-
-  document.getElementById('map-country-detail').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem">
-      <div>
-        <div style="font-size:1.5rem;display:inline">${c.flag}</div>
-        <span style="font-weight:800;font-size:1.05rem;margin-left:8px">${c.name}</span>
-        <div style="font-size:.7rem;color:var(--muted);margin-top:3px">${c.note}</div>
-      </div>
-      <a href="${c.searchUrl}" target="_blank" rel="noopener"
-        style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1.5px solid var(--red);color:var(--red);border-radius:8px;font-size:.75rem;font-weight:700;text-decoration:none;font-family:var(--font)">
-        🗺️ View All on Google Maps
-      </a>
-    </div>
-    <div class="map-detail-grid">${priceCards}</div>
-    <div style="margin-top:1.5rem">
-      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">Station Brands</div>
-      <div class="map-station-list">${brandRows}</div>
-    </div>`;
-}
-
-// ─── TRENDS ───────────────────────────────────────────────────────────────
-function renderTrendsFilter() {
-  const bar = document.getElementById("trends-filter");
-  let html = `<span class="filter-label">Country:</span>
-    <button class="chip ${currentTrendsFilter==='all'?'active':''}" onclick="filterTrends('all')">All</button>`;
-  COUNTRIES.forEach(c => {
-    html += `<button class="chip ${currentTrendsFilter===c.id?'active':''}" onclick="filterTrends('${c.id}')">${c.flag} ${c.name}</button>`;
-  });
-  bar.innerHTML = html;
-}
-function filterTrends(id) {
-  currentTrendsFilter = id;
-  renderTrendsFilter();
-  renderTrendsContent();
-}
-function renderTrendsContent() {
-  const list = currentTrendsFilter==="all" ? COUNTRIES : COUNTRIES.filter(c=>c.id===currentTrendsFilter);
-  let html = "";
-  list.forEach(c => {
-    const first=c.trend[0], last=c.trend[11];
-    const chg = ((last-first)/first*100).toFixed(1);
-    const up = chg > 0;
-    const min = Math.min(...c.trend), max = Math.max(...c.trend);
-    const range = max - min || 1;
-    const W=280, H=60, pad=4;
-    const pts = c.trend.map((v,i)=>{
-      const x = pad + (i/(c.trend.length-1))*(W-pad*2);
-      const y = H - pad - ((v-min)/range)*(H-pad*2);
-      return `${x},${y}`;
-    }).join(" ");
-    const fillPts = `${pad},${H-pad} ` + pts + ` ${W-pad},${H-pad}`;
-    html += `<div class="trend-card">
-      <div class="trend-head">
-        <div class="trend-country"><span>${c.flag}</span>${c.name}</div>
-        <div class="trend-chg ${up?'chg-up':'chg-dn'}">${up?'▲':'▼'} ${Math.abs(chg)}%</div>
-      </div>
-      <div class="trend-meta">RON 95 equiv · ${c.unit} · 12 months</div>
-      <svg class="spark" viewBox="0 0 ${W} ${H}" style="overflow:visible">
-        <defs>
-          <linearGradient id="sg${c.id}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="${up?'#E84B1A':'#059669'}" stop-opacity=".18"/>
-            <stop offset="100%" stop-color="${up?'#E84B1A':'#059669'}" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <polygon points="${fillPts}" fill="url(#sg${c.id})"/>
-        <polyline points="${pts}" fill="none" stroke="${up?'#E84B1A':'#059669'}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-        ${c.trend.map((v,i)=>{
-          const x=pad+(i/(c.trend.length-1))*(W-pad*2);
-          const y=H-pad-((v-min)/range)*(H-pad*2);
-          const lbl=MONTHS[i];
-          return i%3===0?`<text x="${x}" y="${H+12}" text-anchor="middle" font-size="8" fill="#AAA59E" font-family="monospace">${lbl}</text>`:'';
-        }).join('')}
-      </svg>
-    </div>`;
-  });
-  document.getElementById("trends-content").innerHTML = html;
-}
-
-
-// ─── CURRENCY CONVERSION ──────────────────────────────────────────────────
-// Approximate exchange rates to USD (update periodically)
-const FX_TO_USD = {
-  sg: 1/1.35,   // SGD → USD
-  my: 1/4.48,   // MYR → USD
-  th: 1/34.5,   // THB → USD
-  ph: 1/56.5,   // PHP → USD
-  id: 1/16300,  // IDR → USD
-  au: 1/1.55,   // AUD → USD
-  jp: 1/149,    // JPY → USD
-  kr: 1/1340,   // KRW → USD
-  in: 1/83.5,   // INR → USD
-  vn: 1/25400,  // VND → USD
-};
-const USD_TO_SGD = 1.35;
-let currentCurrency = 'local'; // 'local' | 'usd' | 'sgd'
-
-function convertPrice(price, countryId) {
-  if (price === null || price === undefined) return null;
-  if (currentCurrency === 'local') return price;
-  const rate = FX_TO_USD[countryId] || 1;
-  const usd = price * rate;
-  if (currentCurrency === 'usd') return Math.round(usd * 1000) / 1000;
-  if (currentCurrency === 'sgd') return Math.round(usd * USD_TO_SGD * 1000) / 1000;
-  return price;
-}
-
-function getDisplayUnit(country) {
-  if (currentCurrency === 'usd') return 'USD/L';
-  if (currentCurrency === 'sgd') return 'SGD/L';
-  return country.unit;
-}
-
-function getDisplayCurrencySymbol() {
-  if (currentCurrency === 'usd') return 'USD';
-  if (currentCurrency === 'sgd') return 'SGD';
-  return '';
-}
-function getSymbol() { return getDisplayCurrencySymbol(); }
-
-function setCurrency(mode) {
-  currentCurrency = mode;
-  document.getElementById('btn-local').classList.toggle('active', mode === 'local');
-  document.getElementById('btn-usd').classList.toggle('active', mode === 'usd');
-  document.getElementById('btn-sgd').classList.toggle('active', mode === 'sgd');
-  // Re-render all views
-  renderOverview();
-  renderBrandsContent();
-  renderGrades();
-  renderTrendsContent();
-  renderMap();
-}
-
-// ─── INIT ─────────────────────────────────────────────────────────────────
-function init() {
-  renderOverview();
-  renderBrandsFilter();
-  renderBrandsContent();
-  renderGrades();
-  renderMap();
-  renderTrendsFilter();
-  renderTrendsContent();
-  // info note hidden by default
-  const badge = document.getElementById("status-badge");
-  badge.className = "live-badge";
-  badge.innerHTML = '<div class="live-dot"></div>Live';
-}
-
-// Direct init — no external fetch needed
-init();
-</script>
-
-<!-- FOOTER -->
 <div class="site-footer">
   <div class="site-footer-inner">
     <div class="footer-row">
-      <div class="footer-disclaimer">
-        <strong>⚠ Disclaimer:</strong> Prices on FuelWatch APAC are updated on a <strong>weekly basis</strong>, or whenever possible. Data is sourced from publicly available references and may not reflect real-time pump prices. Always verify with your local petrol station before fuelling. FuelWatch APAC is a passion project and is not affiliated with any oil company or government body.
-      </div>
-      <div class="footer-brand">
-        Built with ❤️ by <a href="https://theadvocators.co/" target="_blank" rel="noopener">The Advocators &amp; Co</a>
-      </div>
+      <div class="footer-disc"><strong>Disclaimer:</strong> Prices updated on a <strong>weekly basis</strong> or whenever possible. Always verify with your local petrol station. FuelWatch APAC is a passion project not affiliated with any oil company or government body.</div>
+      <div class="footer-link">Built with love by <a href="https://theadvocators.co/" target="_blank">The Advocators &amp; Co</a></div>
     </div>
     <div class="footer-divider"></div>
     <div class="footer-row">
-      <div class="footer-brand" style="font-size:.62rem;color:var(--muted2);">© 2026 FuelWatch APAC · Free to use · No ads · No sign-up</div>
-      <div class="footer-brand" style="font-size:.62rem;"><a href="https://theadvocators.co/" target="_blank" rel="noopener">theadvocators.co</a></div>
+      <div style="font-size:.62rem;color:#B0ABA4;">© 2026 FuelWatch APAC · Free · No ads · No sign-up</div>
+      <div class="footer-link" style="font-size:.62rem;"><a href="https://theadvocators.co/" target="_blank">theadvocators.co</a></div>
     </div>
   </div>
 </div>
+
+<script>
+var LAST_UPDATED = "28 Mar 2026 (latest)";
+
+var COUNTRIES = [
+  { id:"sg", name:"Singapore", flag:"SG", unit:"SGD/L",
+    brands:[
+      {name:"Esso",    logo:"E", ron92:3.38, ron95:3.42, ron97:null, ron98:3.92, diesel:3.93},
+      {name:"Shell",   logo:"S", ron92:null, ron95:3.42, ron97:null, ron98:3.94, diesel:3.93},
+      {name:"SPC",     logo:"P", ron92:3.38, ron95:3.41, ron97:null, ron98:3.92, diesel:3.66},
+      {name:"Caltex",  logo:"C", ron92:3.38, ron95:3.42, ron97:null, ron98:null, diesel:3.93},
+      {name:"Sinopec", logo:"N", ron92:null, ron95:3.42, ron97:null, ron98:3.92, diesel:3.72}
+    ],
+    trend:[2.85,2.95,3.05,3.15,3.25,3.35,3.42,3.47,3.47,3.47,3.45,3.40],
+    note:"Island-wide network. Esso is Preferred Fuel Partner 2026.",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+singapore",
+    stations:[
+      {name:"Esso",    count:"50+",    url:"https://www.google.com/maps/search/esso+petrol+singapore"},
+      {name:"Shell",   count:"60+",    url:"https://www.google.com/maps/search/shell+petrol+singapore"},
+      {name:"SPC",     count:"40+",    url:"https://www.google.com/maps/search/spc+petrol+singapore"},
+      {name:"Caltex",  count:"35+",    url:"https://www.google.com/maps/search/caltex+petrol+singapore"},
+      {name:"Sinopec", count:"15+",    url:"https://www.google.com/maps/search/sinopec+petrol+singapore"}
+    ]},
+  { id:"my", name:"Malaysia", flag:"MY", unit:"MYR/L",
+    brands:[
+      {name:"Petronas",logo:"P", ron92:null, ron95:3.87, ron97:5.15, ron98:null, diesel:5.52},
+      {name:"Shell",   logo:"S", ron92:null, ron95:3.87, ron97:5.15, ron98:null, diesel:5.52},
+      {name:"Caltex",  logo:"C", ron92:null, ron95:3.87, ron97:5.15, ron98:null, diesel:5.52},
+      {name:"BHPetrol",logo:"B", ron92:null, ron95:3.87, ron97:5.15, ron98:null, diesel:5.52}
+    ],
+    trend:[2.05,2.05,2.70,2.90,3.10,3.15,3.20,3.25,3.27,3.27,3.27,3.27],
+    note:"RON 95 Budi subsidised at RM 1.99 for eligible citizens.",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+malaysia",
+    stations:[
+      {name:"Petronas",count:"1,000+", url:"https://www.google.com/maps/search/petronas+petrol+malaysia"},
+      {name:"Shell",   count:"950+",   url:"https://www.google.com/maps/search/shell+petrol+malaysia"},
+      {name:"Caltex",  count:"600+",   url:"https://www.google.com/maps/search/caltex+petrol+malaysia"},
+      {name:"BHPetrol",count:"300+",   url:"https://www.google.com/maps/search/bhpetrol+malaysia"}
+    ]},
+  { id:"th", name:"Thailand", flag:"TH", unit:"THB/L",
+    brands:[
+      {name:"PTT",     logo:"P", ron92:35.96, ron95:40.50, ron97:null, ron98:null, diesel:28.79},
+      {name:"Shell",   logo:"S", ron92:36.08, ron95:40.75, ron97:null, ron98:null, diesel:28.89},
+      {name:"Bangchak",logo:"B", ron92:35.88, ron95:40.40, ron97:null, ron98:null, diesel:28.70}
+    ],
+    trend:[36.5,37.2,38.0,39.1,40.0,40.5,40.8,40.5,40.2,40.5,40.8,40.5],
+    note:"PTT is state-owned dominant brand. Prices adjusted weekly.",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+thailand",
+    stations:[
+      {name:"PTT",     count:"1,800+", url:"https://www.google.com/maps/search/ptt+petrol+thailand"},
+      {name:"Shell",   count:"700+",   url:"https://www.google.com/maps/search/shell+petrol+thailand"},
+      {name:"Bangchak",count:"1,100+", url:"https://www.google.com/maps/search/bangchak+petrol+thailand"}
+    ]},
+  { id:"ph", name:"Philippines", flag:"PH", unit:"PHP/L",
+    brands:[
+      {name:"Shell",  logo:"S", ron92:56.20, ron95:60.80, ron97:null, ron98:65.40, diesel:55.30},
+      {name:"Caltex", logo:"C", ron92:55.90, ron95:60.50, ron97:null, ron98:65.10, diesel:55.00},
+      {name:"Petron", logo:"P", ron92:55.60, ron95:60.20, ron97:null, ron98:64.80, diesel:54.70}
+    ],
+    trend:[53.2,54.5,56.8,58.2,60.1,60.8,61.2,60.5,59.8,60.8,61.5,60.8],
+    note:"DOE adjusts prices weekly. Prices vary slightly by region.",
+    searchUrl:"https://www.google.com/maps/search/gas+station+philippines",
+    stations:[
+      {name:"Shell",  count:"1,100+", url:"https://www.google.com/maps/search/shell+gas+philippines"},
+      {name:"Caltex", count:"800+",   url:"https://www.google.com/maps/search/caltex+gas+philippines"},
+      {name:"Petron", count:"2,300+", url:"https://www.google.com/maps/search/petron+gas+philippines"}
+    ]},
+  { id:"id", name:"Indonesia", flag:"ID", unit:"IDR/L",
+    brands:[
+      {name:"Pertamina",logo:"P", ron92:10000, ron95:13500, ron97:null, ron98:15900, diesel:6800},
+      {name:"Shell",    logo:"S", ron92:null,  ron95:13990, ron97:null, ron98:16290, diesel:14640},
+      {name:"Vivo",     logo:"V", ron92:10000, ron95:13500, ron97:null, ron98:null,  diesel:13590}
+    ],
+    trend:[9500,9500,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000],
+    note:"Pertalite (RON 92) is subsidised. Pertamina has widest network.",
+    searchUrl:"https://www.google.com/maps/search/spbu+pertamina+indonesia",
+    stations:[
+      {name:"Pertamina",count:"7,000+", url:"https://www.google.com/maps/search/spbu+pertamina+indonesia"},
+      {name:"Shell",    count:"100+",   url:"https://www.google.com/maps/search/shell+spbu+indonesia"},
+      {name:"Vivo",     count:"50+",    url:"https://www.google.com/maps/search/vivo+spbu+indonesia"}
+    ]},
+  { id:"au", name:"Australia", flag:"AU", unit:"AUD/L",
+    brands:[
+      {name:"Shell",  logo:"S", ron92:null, ron95:2.10, ron97:null, ron98:2.35, diesel:2.18},
+      {name:"BP",     logo:"B", ron92:null, ron95:2.12, ron97:null, ron98:2.38, diesel:2.20},
+      {name:"Ampol",  logo:"A", ron92:null, ron95:2.05, ron97:null, ron98:2.29, diesel:2.12},
+      {name:"Caltex", logo:"C", ron92:null, ron95:2.08, ron97:null, ron98:2.32, diesel:2.15}
+    ],
+    trend:[1.75,1.82,1.90,1.98,2.05,2.10,2.18,2.14,2.08,2.10,2.15,2.10],
+    note:"Prices follow weekly cycle. Tuesday/Wednesday typically cheapest.",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+australia",
+    stations:[
+      {name:"Ampol",  count:"1,900+", url:"https://www.google.com/maps/search/ampol+petrol+australia"},
+      {name:"BP",     count:"1,400+", url:"https://www.google.com/maps/search/bp+petrol+australia"},
+      {name:"Shell",  count:"700+",   url:"https://www.google.com/maps/search/shell+petrol+australia"},
+      {name:"Caltex", count:"500+",   url:"https://www.google.com/maps/search/caltex+petrol+australia"}
+    ]},
+  { id:"jp", name:"Japan", flag:"JP", unit:"JPY/L",
+    brands:[
+      {name:"ENEOS",    logo:"E", ron92:null, ron95:175, ron97:null, ron98:186, diesel:154},
+      {name:"Idemitsu", logo:"I", ron92:null, ron95:174, ron97:null, ron98:185, diesel:153},
+      {name:"Cosmo Oil",logo:"C", ron92:null, ron95:173, ron97:null, ron98:184, diesel:152}
+    ],
+    trend:[158,162,165,168,172,175,178,176,173,175,177,175],
+    note:"METI publishes weekly averages. Tax accounts for ~50% of pump price.",
+    searchUrl:"https://www.google.com/maps/search/gas+station+tokyo",
+    stations:[
+      {name:"ENEOS",    count:"12,000+", url:"https://www.google.com/maps/search/eneos+gas+station+japan"},
+      {name:"Idemitsu", count:"6,000+",  url:"https://www.google.com/maps/search/idemitsu+gas+station+japan"},
+      {name:"Cosmo Oil",count:"3,400+",  url:"https://www.google.com/maps/search/cosmo+gas+station+japan"}
+    ]},
+  { id:"kr", name:"S. Korea", flag:"KR", unit:"KRW/L",
+    brands:[
+      {name:"SK Energy",      logo:"S", ron92:1610, ron95:1670, ron97:null, ron98:null, diesel:1520},
+      {name:"GS Caltex",      logo:"G", ron92:1605, ron95:1665, ron97:null, ron98:null, diesel:1515},
+      {name:"Hyundai Oilbank",logo:"H", ron92:1595, ron95:1655, ron97:null, ron98:null, diesel:1505}
+    ],
+    trend:[1520,1548,1572,1598,1625,1670,1692,1680,1668,1670,1678,1670],
+    note:"OPINET tracks daily prices. Tax accounts for ~55% of retail price.",
+    searchUrl:"https://www.google.com/maps/search/gas+station+seoul",
+    stations:[
+      {name:"SK Energy",      count:"4,700+", url:"https://www.google.com/maps/search/sk+gas+station+korea"},
+      {name:"GS Caltex",      count:"4,600+", url:"https://www.google.com/maps/search/gs+caltex+korea"},
+      {name:"Hyundai Oilbank",count:"2,700+", url:"https://www.google.com/maps/search/hyundai+oilbank+korea"}
+    ]},
+  { id:"in", name:"India", flag:"IN", unit:"INR/L",
+    brands:[
+      {name:"Indian Oil",logo:"I", ron92:null, ron95:102.92, ron97:null, ron98:111.30, diesel:89.62},
+      {name:"BPCL",      logo:"B", ron92:null, ron95:102.78, ron97:null, ron98:111.10, diesel:89.45},
+      {name:"HPCL",      logo:"H", ron92:null, ron95:102.85, ron97:null, ron98:111.20, diesel:89.55}
+    ],
+    trend:[96.8,98.2,100.1,101.5,102.4,102.9,103.2,102.9,102.5,102.9,103.2,102.9],
+    note:"Prices revised daily. Vary by state due to local taxes.",
+    searchUrl:"https://www.google.com/maps/search/petrol+pump+india",
+    stations:[
+      {name:"Indian Oil",count:"34,000+", url:"https://www.google.com/maps/search/indian+oil+petrol+pump"},
+      {name:"BPCL",      count:"19,000+", url:"https://www.google.com/maps/search/bpcl+petrol+pump+india"},
+      {name:"HPCL",      count:"20,000+", url:"https://www.google.com/maps/search/hpcl+petrol+pump+india"}
+    ]},
+  { id:"vn", name:"Vietnam", flag:"VN", unit:"VND/L",
+    brands:[
+      {name:"Petrolimex",logo:"P", ron92:19300, ron95:20500, ron97:null, ron98:null, diesel:17600},
+      {name:"PV Oil",    logo:"V", ron92:19250, ron95:20450, ron97:null, ron98:null, diesel:17550}
+    ],
+    trend:[18200,18500,19000,19500,20000,20500,20800,20500,20200,20500,20800,20500],
+    note:"Government sets max retail prices, updated every 10 days.",
+    searchUrl:"https://www.google.com/maps/search/petrol+station+vietnam",
+    stations:[
+      {name:"Petrolimex",count:"5,000+", url:"https://www.google.com/maps/search/petrolimex+vietnam"},
+      {name:"PV Oil",    count:"500+",   url:"https://www.google.com/maps/search/pv+oil+vietnam"}
+    ]}
+];
+
+var GRADES  = ["ron92","ron95","ron97","ron98","diesel"];
+var GLABELS = {ron92:"RON 92",ron95:"RON 95",ron97:"RON 97",ron98:"RON 98",diesel:"Diesel"};
+var GCOLORS = {ron92:"#FEF3C7|#92400E",ron95:"#D1FAE5|#064E3B",ron97:"#FCE7F3|#9D174D",ron98:"#DBEAFE|#1E3A8A",diesel:"#EDE9FE|#4C1D95"};
+var MONTHS  = ["Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb"];
+var FX      = {sg:1/1.35,my:1/4.48,th:1/34.5,ph:1/56.5,id:1/16300,au:1/1.55,jp:1/149,kr:1/1340,in:1/83.5,vn:1/25400};
+var USGD    = 1.35;
+var currency = "local";
+var bFilter  = "all";
+var tFilter  = "all";
+var mapId    = "sg";
+
+function getBest(c,g){var v=c.brands.map(function(b){return b[g];}).filter(function(x){return x!=null;});return v.length?Math.min.apply(null,v):null;}
+function getBestBrand(c,g){var best=null,nm=null;c.brands.forEach(function(b){if(b[g]!=null&&(best===null||b[g]<best)){best=b[g];nm=b.name;}});return nm;}
+function fmt(p){if(p==null)return null;if(p>=10000)return p.toLocaleString();if(p>=1000)return p.toLocaleString();if(p>=100)return p.toFixed(0);return p.toFixed(2);}
+function cur(c){return c.unit.split("/")[0];}
+function cvt(p,id){if(p==null)return null;if(currency==="local")return p;var u=p*(FX[id]||1);return currency==="usd"?Math.round(u*1000)/1000:Math.round(u*USGD*1000)/1000;}
+function sym(){return currency==="usd"?"USD":currency==="sgd"?"SGD":"";}
+function unitLbl(c){return currency==="local"?c.unit:sym()+"/L";}
+
+function setCurrency(m){
+  currency=m;
+  ["local","usd","sgd"].forEach(function(x){document.getElementById("btn-"+x).classList.toggle("active",x===m);});
+  renderOverview();renderBrandsContent();renderGrades();renderTrendsContent();renderMapDetail(mapId);
+}
+
+function updateClock(){
+  var now=new Date();
+  document.getElementById("clock").innerHTML=now.toLocaleDateString("en-SG",{weekday:"short",day:"numeric",month:"short"})+"<br>"+now.toLocaleTimeString("en-SG",{hour:"2-digit",minute:"2-digit"})+" SGT";
+}
+updateClock();setInterval(updateClock,30000);
+
+function showTab(name){
+  document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");});
+  document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
+  document.getElementById("view-"+name).classList.add("active");
+  ["overview","brands","grades","map","trends"].forEach(function(t,i){
+    if(t===name)document.querySelectorAll(".nav-tab")[i].classList.add("active");
+  });
+  if(name==="map")renderMap();
+}
+
+function renderOverview(){
+  var html='<div class="country-grid">';
+  COUNTRIES.forEach(function(c){
+    html+='<div class="country-card" onclick="showTab(\'brands\');filterBrands(\''+c.id+'\')"><div class="card-head"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.3rem">'+c.flag+'</span><div><div class="card-name">'+c.name+'</div><div class="card-unit">'+unitLbl(c)+'</div></div></div><span class="card-count">'+c.brands.length+' brands</span></div>';
+    GRADES.forEach(function(g){
+      var p=cvt(getBest(c,g),c.id);
+      var u=currency==="local"?cur(c):sym();
+      if(p!==null)html+='<div class="fuel-row"><span class="ftag '+g+'">'+GLABELS[g]+'</span><span class="fprice">'+fmt(p)+' <span class="fprice-unit">'+u+'</span></span></div>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  document.getElementById("view-overview").innerHTML=html;
+}
+
+function renderBrandsFilter(){
+  var html='<span class="filter-label">Country:</span><button class="chip '+(bFilter==="all"?"active":"")+'" onclick="filterBrands(\'all\')">All</button>';
+  COUNTRIES.forEach(function(c){html+='<button class="chip '+(bFilter===c.id?"active":"")+'" onclick="filterBrands(\''+c.id+'\')">'+c.flag+' '+c.name+'</button>';});
+  document.getElementById("brands-filter").innerHTML=html;
+}
+function filterBrands(id){bFilter=id;renderBrandsFilter();renderBrandsContent();}
+function renderBrandsContent(){
+  var list=bFilter==="all"?COUNTRIES:COUNTRIES.filter(function(c){return c.id===bFilter;});
+  var html="";
+  list.forEach(function(c){
+    var has=function(g){return c.brands.some(function(b){return b[g]!=null;});};
+    var cell=function(val,isBest){return val!=null?'<td class="td-price '+(isBest?"best":"")+'">'+(fmt(cvt(val,c.id)))+(isBest?'<span class="best-tag">BEST</span>':'')+'</td>':'<td class="td-na">—</td>';};
+    html+='<div class="btable-wrap"><div class="btable-head"><span style="font-size:1.2rem">'+c.flag+'</span><span class="btable-cname">'+c.name+'</span><span class="btable-unit">'+unitLbl(c)+'</span></div><table><thead><tr><th>Brand</th>'+(has("ron92")?"<th class='r'>RON 92</th>":"")+'<th class="r">RON 95</th>'+(has("ron97")?"<th class='r'>RON 97</th>":"")+(has("ron98")?"<th class='r'>RON 98</th>":"")+'<th class="r">Diesel</th></tr></thead><tbody>';
+    c.brands.forEach(function(b){
+      html+='<tr><td><div class="td-brand">'+b.name+'</div></td>'+(has("ron92")?cell(b.ron92,b.name===getBestBrand(c,"ron92")):"")+(cell(b.ron95,b.name===getBestBrand(c,"ron95")))+(has("ron97")?cell(b.ron97,b.name===getBestBrand(c,"ron97")):"")+(has("ron98")?cell(b.ron98,b.name===getBestBrand(c,"ron98")):"")+(cell(b.diesel,b.name===getBestBrand(c,"diesel")))+'</tr>';
+    });
+    html+='</tbody></table></div>';
+  });
+  document.getElementById("brands-content").innerHTML=html;
+}
+
+function renderGrades(){
+  var html="";
+  GRADES.forEach(function(g){
+    var eligible=COUNTRIES.filter(function(c){return getBest(c,g)!==null;});
+    if(!eligible.length)return;
+    var parts=GCOLORS[g].split("|");var bg=parts[0];var col=parts[1];
+    var rows="";
+    eligible.forEach(function(c){
+      var p=cvt(getBest(c,g),c.id);
+      rows+='<div class="grade-row"><div class="gr-country">'+c.flag+' '+c.name+'</div><div><span class="gr-price">'+fmt(p)+'</span><span class="gr-unit">'+(currency==="local"?cur(c):sym())+'/L</span></div></div>';
+    });
+    html+='<div class="grade-card"><div class="grade-card-head"><span style="background:'+bg+';color:'+col+';padding:3px 14px;border-radius:999px;font-size:.72rem;font-weight:700;font-family:var(--mono)">'+GLABELS[g]+'</span><span class="grade-markets">'+eligible.length+' markets</span></div>'+rows+'</div>';
+  });
+  document.getElementById("grades-content").innerHTML=html;
+}
+
+function renderMap(){
+  var btns='<span style="font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px">Country:</span>';
+  COUNTRIES.forEach(function(c){btns+='<button class="mcbtn '+(c.id===mapId?"active":"")+'" onclick="selectMap(\''+c.id+'\')">'+c.flag+' '+c.name+'</button>';});
+  document.getElementById("map-controls").innerHTML=btns;
+  renderMapDetail(mapId);
+}
+function selectMap(id){
+  mapId=id;
+  document.querySelectorAll(".mcbtn").forEach(function(b){b.classList.remove("active");});
+  var btns=document.querySelectorAll(".mcbtn");
+  COUNTRIES.forEach(function(c,i){if(c.id===id)btns[i].classList.add("active");});
+  renderMapDetail(id);
+}
+function renderMapDetail(id){
+  var c=null;
+  for(var i=0;i<COUNTRIES.length;i++){if(COUNTRIES[i].id===id){c=COUNTRIES[i];break;}}
+  if(!c)return;
+  var cards="";
+  GRADES.forEach(function(g){
+    var p=cvt(getBest(c,g),id);
+    if(p===null)return;
+    var u=currency==="local"?cur(c):sym();
+    var parts=GCOLORS[g].split("|");var col=parts[1];
+    cards+='<div class="price-card"><div class="pc-label">'+GLABELS[g]+'</div><div class="pc-val" style="color:'+col+'">'+fmt(p)+' <span style="font-size:.6rem;color:var(--muted);font-weight:400">'+u+'/L</span></div><div class="pc-sub">Best available</div></div>';
+  });
+  var rows="";
+  c.stations.forEach(function(s){rows+='<div class="station-row"><div class="stn-name"><div><div class="stn-title">'+s.name+'</div><div class="stn-count">'+s.count+' stations nationwide</div></div></div><a href="'+s.url+'" target="_blank" rel="noopener" class="find-btn">Find Stations</a></div>';});
+  document.getElementById("map-detail").innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem"><div><span style="font-weight:800;font-size:1rem">'+c.flag+' '+c.name+'</span><div style="font-size:.7rem;color:var(--muted);margin-top:3px">'+c.note+'</div></div><a href="'+c.searchUrl+'" target="_blank" rel="noopener" class="view-all-btn">View All on Google Maps</a></div><div class="price-cards">'+cards+'</div><div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem">Station Brands</div><div class="station-list">'+rows+'</div>';
+}
+
+function renderTrendsFilter(){
+  var html='<span class="filter-label">Country:</span><button class="chip '+(tFilter==="all"?"active":"")+'" onclick="filterTrends(\'all\')">All</button>';
+  COUNTRIES.forEach(function(c){html+='<button class="chip '+(tFilter===c.id?"active":"")+'" onclick="filterTrends(\''+c.id+'\')">'+c.flag+' '+c.name+'</button>';});
+  document.getElementById("trends-filter").innerHTML=html;
+}
+function filterTrends(id){tFilter=id;renderTrendsFilter();renderTrendsContent();}
+function renderTrendsContent(){
+  var list=tFilter==="all"?COUNTRIES:COUNTRIES.filter(function(c){return c.id===tFilter;});
+  var html="";
+  list.forEach(function(c){
+    var chg=((c.trend[11]-c.trend[0])/c.trend[0]*100).toFixed(1);
+    var up=parseFloat(chg)>0;
+    var mn=Math.min.apply(null,c.trend),mx=Math.max.apply(null,c.trend),rng=mx-mn||1;
+    var W=280,H=60,pad=4;
+    var pts=c.trend.map(function(v,i){return (pad+(i/(c.trend.length-1))*(W-pad*2))+","+(H-pad-((v-mn)/rng)*(H-pad*2));}).join(" ");
+    var fill=(pad)+","+(H-pad)+" "+pts+" "+(W-pad)+","+(H-pad);
+    var col=up?"#E84B1A":"#059669";
+    html+='<div class="trend-card"><div class="trend-head"><div class="trend-country">'+c.flag+' '+c.name+'</div><div class="trend-chg '+(up?"chg-up":"chg-dn")+'">'+(up?"▲":"▼")+' '+Math.abs(chg)+'%</div></div><div class="trend-meta">RON 95 equiv · '+c.unit+' · 12 months</div><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:70px;display:block;overflow:visible"><defs><linearGradient id="g'+c.id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity=".18"/><stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs><polygon points="'+fill+'" fill="url(#g'+c.id+')" /><polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'+c.trend.map(function(v,i){return i%3===0?'<text x="'+(pad+(i/(c.trend.length-1))*(W-pad*2))+'" y="'+(H+14)+'" text-anchor="middle" font-size="8" fill="#AAA59E" font-family="monospace">'+MONTHS[i]+'</text>':"";}).join("")+'</svg></div>';
+  });
+  document.getElementById("trends-content").innerHTML=html;
+}
+
+document.getElementById("last-updated").textContent=LAST_UPDATED;
+renderOverview();
+renderBrandsFilter();renderBrandsContent();
+renderGrades();
+renderTrendsFilter();renderTrendsContent();
+</script>
 </body>
 </html>

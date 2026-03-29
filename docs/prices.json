@@ -1,36 +1,41 @@
 {
-  "updated": "2026-03-24T03:00:00Z",
-  "updated_sgt": "24 Mar 2026, 11:00 AM SGT",
+  "updated": "2026-03-28T05:22:16Z",
+  "updated_sgt": "28 Mar 2026, 01:22 PM SGT",
   "countries": {
     "sg": {
       "Esso": {
-        "ron92": 3.43,
-        "ron95": 3.47,
-        "ron98": 3.97,
-        "diesel": 3.73
+        "ron92": 3.38,
+        "ron95": 3.42,
+        "ron97": null,
+        "ron98": 3.92,
+        "diesel": 3.93
       },
       "Shell": {
         "ron92": null,
-        "ron95": 3.47,
-        "ron98": 3.99,
-        "diesel": 3.73
+        "ron95": 3.4,
+        "ron97": null,
+        "ron98": 3.92,
+        "diesel": 3.93
       },
       "SPC": {
-        "ron92": 3.43,
-        "ron95": 3.46,
-        "ron98": 3.97,
-        "diesel": 3.56
+        "ron92": 3.38,
+        "ron95": 3.41,
+        "ron97": null,
+        "ron98": 3.92,
+        "diesel": 3.72
       },
       "Caltex": {
-        "ron92": 3.43,
-        "ron95": 3.47,
+        "ron92": 3.38,
+        "ron95": 3.42,
+        "ron97": null,
         "ron98": null,
-        "diesel": 3.73
+        "diesel": 3.93
       },
       "Sinopec": {
         "ron92": null,
-        "ron95": 3.47,
-        "ron98": 3.97,
+        "ron95": 3.42,
+        "ron97": null,
+        "ron98": 3.92,
         "diesel": 3.72
       }
     },
@@ -38,25 +43,29 @@
       "Petronas": {
         "ron92": null,
         "ron95": 3.27,
-        "ron98": 4.55,
+        "ron97": 4.55,
+        "ron98": null,
         "diesel": 4.72
       },
       "Shell": {
         "ron92": null,
         "ron95": 3.27,
-        "ron98": 4.55,
+        "ron97": 4.55,
+        "ron98": null,
         "diesel": 4.72
       },
       "Caltex": {
         "ron92": null,
         "ron95": 3.27,
-        "ron98": 4.55,
+        "ron97": 4.55,
+        "ron98": null,
         "diesel": 4.72
       },
       "BHPetrol": {
         "ron92": null,
         "ron95": 3.27,
-        "ron98": 4.55,
+        "ron97": 4.55,
+        "ron98": null,
         "diesel": 4.72
       }
     },
